@@ -67,25 +67,18 @@ class User:
 
 class Project:
 
-    __total_project_number = 0
-    __project_names_set = set()
-
-    def __init__(self, project_name: str = None, project_description: str = None):
-        load_dotenv()
-        max_projects = int(os.getenv("MAX_NUMBER_OF_PROJECTS", 30))
-        if self.__class__.__total_project_number + 1 > max_projects:
-            raise Exception(f"Cannot create more than {max_projects} projects.")
-
+    def __init__(self, project_name: str = None, project_description: str = None, container_user: "User" = None):
         self._project_name = None
         self._project_description = None
         self._project_tasks = []
+        self._container_user = None
 
         if project_name:
             self.project_name = project_name
         if project_description:
             self.project_description = project_description
-
-        self.__class__.__total_project_number += 1
+        if container_user:
+            self.container_user = container_user
 
     @property
     def project_name(self):
@@ -93,17 +86,13 @@ class Project:
 
     @project_name.setter
     def project_name(self, value: str) -> None:
-        if value in self.__class__.__project_names_set:
-            raise ValueError("Project name must be unique.")
-        else:
-            self.__class__.__project_names_set.add(value)
-            if self._project_name is not None:
-                self.__class__.__project_names_set.remove(self._project_name)
-
-        if len(value) <= 30:
-            self._project_name = value
-        else:
+        if self._container_user:
+            for project in self._container_user.projects:
+                if project.project_name == value and project != self:
+                    raise ValueError("Project name must be unique within the user's projects.")
+        if len(value) > 30:
             raise ValueError("Project name must be 30 characters or fewer.")
+        self._project_name = value
 
     @property
     def project_description(self):
@@ -111,34 +100,40 @@ class Project:
 
     @project_description.setter
     def project_description(self, value: str) -> None:
-        if len(value) <= 150:
-            self._project_description = value
-        else:
-            raise ValueError("Project description must be 100 characters or fewer.")
+        if len(value) > 150:
+            raise ValueError("Project description must be 150 characters or fewer.")
+        self._project_description = value
 
     @property
     def project_tasks(self):
         return self._project_tasks
 
+    @property
+    def container_user(self):
+        return self._container_user
+
+    @container_user.setter
+    def container_user(self, value: "User") -> None:
+        if not isinstance(value, User):
+            raise ValueError("container_user must be a User instance.")
+        value.add_project(self)
+        if self._container_user:
+            if self in self._container_user.projects:
+                self._container_user.projects.remove(self)
+        self._container_user = value
+
 
     def set_name(self, new_name: str) -> None:
-        if self.project_name in self.__class__.__project_names_set:
-            self.__class__.__project_names_set.remove(self.project_name)
-
-        if new_name in self.__class__.__project_names_set:
-            raise ValueError("Project name must be unique.")
-        else:
-            self.project_name = new_name
-            self.__class__.__project_names_set.add(self.project_name)
+        self.project_name = new_name
 
     def set_description(self, new_description: str) -> None:
         self.project_description = new_description
 
     def delete_project(self):
-        if self.project_name in self.__class__.__project_names_set:
-            self.__class__.__project_names_set.remove(self.project_name)
-
-        self.__class__.__total_project_number -= 1
+        for task in self.project_tasks:
+            task.delete_task()
+        if self.container_user and self in self.container_user.projects:
+            self.container_user.projects.remove(self)
         del self
 
     def add_task(self, task: "Task") -> None:
