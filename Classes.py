@@ -58,8 +58,6 @@ class Project:
     def project_tasks(self):
         return self._project_tasks
 
-    def __str__(self):
-        return f"Project: {self.project_name} - {self.project_description}"
 
     def set_name(self, new_name: str) -> None:
         if self.project_name in self.__class__.__project_names_set:
@@ -82,11 +80,26 @@ class Project:
         del self
 
     def add_task(self, task: "Task") -> None:
-        if isinstance(task, Task):
-            self._project_tasks.append(task)
-        else:
-            raise ValueError("Only Task instances can be added.")
+        """
+        Add a Task instance to the project's task list.
+        param task: Task instance to be added.
+        return: None
+        """
 
+        if not isinstance(task, Task):
+            raise ValueError("Only Task instances can be added.")
+        load_dotenv()
+        max_tasks = int(os.getenv("MAX_NUMBER_OF_TASKS", 20))
+        if len(self.project_tasks) >= max_tasks:
+            raise Exception(f"Cannot add more than {max_tasks} tasks to a project.")
+        task.container_project = self
+        self.project_tasks.append(task)
+
+    def __str__(self):
+        return f"Project: {self.project_name} - {self.project_description}"
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Task:
@@ -112,7 +125,7 @@ class Task:
         return self._task_name
 
     @task_name.setter
-    def task_name(self, value):
+    def task_name(self, value: str) -> None:
         if len(value) <= 30:
             self._task_name = value
         else:
@@ -123,7 +136,7 @@ class Task:
         return self._task_description
 
     @task_description.setter
-    def task_description(self, value):
+    def task_description(self, value: str) -> None:
         if len(value) <= 150:
             self._task_description = value
         else:
@@ -134,28 +147,48 @@ class Task:
         return self._task_status
 
     @task_status.setter
-    def task_status(self, value):
+    def task_status(self, value: str) -> None:
         if value in ["todo", "doing", "done"]:
             self._task_status = value
         else:
-            raise ValueError("Task status must be 'todo', 'doing', or 'done'.")
+            raise ValueError("Task status must be \"todo\", \"doing\", or \"done\".")
 
     @property
     def task_due_date(self):
         return self._task_due_date
 
     @task_due_date.setter
-    def task_due_date(self, value):
+    def task_due_date(self, value: str) -> None:
         try:
             datetime.strptime(value, "%Y-%m-%d")
             self._task_due_date = value
         except ValueError:
             raise ValueError("Task due date must be in 'YYYY-MM-DD' format.")
 
+    def set_name(self, new_name: str) -> None:
+        self.task_name = new_name
 
+    def set_description(self, new_description: str) -> None:
+        self.task_description = new_description
 
-    def __str__(self):
+    def set_status(self, new_status: str) -> None:
+        """
+        Change the status of the task. Must be one of "todo", "doing", or "done".
+        param new_status: New status string for the task.
+        return: None
+        """
+        self.task_status = new_status
+
+    def set_due_date(self, new_due_date: str) -> None:
+        self.task_due_date = new_due_date
+
+    def delete_task(self) -> None:
+        if self.container_project and self in self.container_project.project_tasks:
+            self.container_project.project_tasks.remove(self)
+        del self
+
+    def __str__(self) -> str:
         return f"Task: {self.task_name} - {self.task_description} | Status: {self.task_status} | Due: {self.task_due_date}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
