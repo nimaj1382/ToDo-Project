@@ -46,6 +46,12 @@ class User:
                 raise ValueError("Project name must be unique within the user's projects.")
         self.projects.append(project)
 
+    def show_projects(self) -> None:
+        result_string = f"{self.username}'s Projects:\n"
+        for project in self.projects:
+            result_string += f"{project.project_name} - {project.project_description}\n"
+        print(result_string)
+
     def remove_user(self) -> None:
         for project in self.projects:
             project.delete_project()
