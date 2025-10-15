@@ -5,10 +5,14 @@ from datetime import datetime
 
 class User:
 
-    def __init__(self):
+    def __init__(self, *, username: str = None, full_name: str = None):
         self._projects = []
         self._username = None
         self._full_name = None
+        if username:
+            self.username = username
+        if full_name:
+            self.full_name = full_name
 
     @property
     def projects(self):
@@ -41,6 +45,19 @@ class User:
             if p.project_name == project.project_name:
                 raise ValueError("Project name must be unique within the user's projects.")
         self.projects.append(project)
+
+    def remove_user(self) -> None:
+        for project in self.projects:
+            project.delete_project()
+        del self
+
+    def __str__(self) -> str:
+        return f"User: {self.username} - {self.full_name}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
+
 
 class Project:
 
