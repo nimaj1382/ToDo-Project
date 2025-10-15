@@ -1,83 +1,161 @@
 from dotenv import load_dotenv
 import os
+from datetime import datetime
+
 
 class Project:
 
-    __TotalProjectNumber = 0
-    __ProjectNamesSet = set()
+    __total_project_number = 0
+    __project_names_set = set()
 
-    def __init__(self, ProjectName = None, ProjectDescription = None):
+    def __init__(self, project_name: str = None, project_description: str = None):
         load_dotenv()
         max_projects = int(os.getenv("MAX_NUMBER_OF_PROJECTS", 30))
-        if self.__class__.__TotalProjectNumber > max_projects:
+        if self.__class__.__total_project_number + 1 > max_projects:
             raise Exception(f"Cannot create more than {max_projects} projects.")
 
-        self._ProjectName = None
-        self._ProjectDescription = None
+        self._project_name = None
+        self._project_description = None
+        self._project_tasks = []
 
-        if ProjectName:
-            self.ProjectName = ProjectName
-        if ProjectDescription:
-            self.ProjectDescription = ProjectDescription
+        if project_name:
+            self.project_name = project_name
+        if project_description:
+            self.project_description = project_description
 
+        self.__class__.__total_project_number += 1
 
     @property
-    def ProjectName(self):
-        return self._ProjectName
+    def project_name(self):
+        return self._project_name
 
-    @ProjectName.setter
-    def ProjectName(self, value):
-
-        if value in self.__class__.__ProjectNamesSet:
-            raise ValueError("ProjectName must be unique.")
+    @project_name.setter
+    def project_name(self, value: str) -> None:
+        if value in self.__class__.__project_names_set:
+            raise ValueError("Project name must be unique.")
         else:
-            self.__class__.__ProjectNamesSet.add(value)
-            if self._ProjectName != None:
-                self.__class__.__ProjectNamesSet.remove(self._ProjectName)
+            self.__class__.__project_names_set.add(value)
+            if self._project_name is not None:
+                self.__class__.__project_names_set.remove(self._project_name)
 
         if len(value) <= 30:
-            self._ProjectName = value
+            self._project_name = value
         else:
-            raise ValueError("ProjectName must be 30 characters or fewer.")
-
+            raise ValueError("Project name must be 30 characters or fewer.")
 
     @property
-    def ProjectDescription(self):
-        return self._ProjectDescription
+    def project_description(self):
+        return self._project_description
 
-    @ProjectDescription.setter
-    def ProjectDescription(self, value):
+    @project_description.setter
+    def project_description(self, value: str) -> None:
         if len(value) <= 150:
-            self._ProjectDescription = value
+            self._project_description = value
         else:
-            raise ValueError("ProjectDescription must be 100 characters or fewer.")
+            raise ValueError("Project description must be 100 characters or fewer.")
+
+    @property
+    def project_tasks(self):
+        return self._project_tasks
+
+    def __str__(self):
+        return f"Project: {self.project_name} - {self.project_description}"
+
+    def set_name(self, new_name: str) -> None:
+        if self.project_name in self.__class__.__project_names_set:
+            self.__class__.__project_names_set.remove(self.project_name)
+
+        if new_name in self.__class__.__project_names_set:
+            raise ValueError("Project name must be unique.")
+        else:
+            self.project_name = new_name
+            self.__class__.__project_names_set.add(self.project_name)
+
+    def set_description(self, new_description: str) -> None:
+        self.project_description = new_description
+
+    def delete_project(self):
+        if self.project_name in self.__class__.__project_names_set:
+            self.__class__.__project_names_set.remove(self.project_name)
+
+        self.__class__.__total_project_number -= 1
+        del self
+
+    def add_task(self, task: "Task") -> None:
+        if isinstance(task, Task):
+            self._project_tasks.append(task)
+        else:
+            raise ValueError("Only Task instances can be added.")
+
+
+
+class Task:
+
+    def __init__(self, *, task_name: str = None, task_description: str = None, task_status: str = "todo", task_due_date: str = None):
+        self._task_name = None
+        self._task_description = None
+        self._task_status = "todo"
+        self._task_due_date = None
+        self.container_project = None
+
+        if task_name:
+            self.task_name = task_name
+        if task_description:
+            self.task_description = task_description
+        if task_status:
+            self.task_status = task_status
+        if task_due_date:
+            self.task_due_date = task_due_date
+
+    @property
+    def task_name(self):
+        return self._task_name
+
+    @task_name.setter
+    def task_name(self, value):
+        if len(value) <= 30:
+            self._task_name = value
+        else:
+            raise ValueError("Task name must be 30 characters or fewer.")
+
+    @property
+    def task_description(self):
+        return self._task_description
+
+    @task_description.setter
+    def task_description(self, value):
+        if len(value) <= 150:
+            self._task_description = value
+        else:
+            raise ValueError("Task description must be 150 characters or fewer.")
+
+    @property
+    def task_status(self):
+        return self._task_status
+
+    @task_status.setter
+    def task_status(self, value):
+        if value in ["todo", "doing", "done"]:
+            self._task_status = value
+        else:
+            raise ValueError("Task status must be 'todo', 'doing', or 'done'.")
+
+    @property
+    def task_due_date(self):
+        return self._task_due_date
+
+    @task_due_date.setter
+    def task_due_date(self, value):
+        try:
+            datetime.strptime(value, "%Y-%m-%d")
+            self._task_due_date = value
+        except ValueError:
+            raise ValueError("Task due date must be in 'YYYY-MM-DD' format.")
 
 
 
     def __str__(self):
-        return "Project: " + self.ProjectName + " - " + self.ProjectDescription
+        return f"Task: {self.task_name} - {self.task_description} | Status: {self.task_status} | Due: {self.task_due_date}"
 
-
-    def setName(self, new_name):
-        if self.ProjectName in self.__class__.__ProjectNamesSet:
-            self.__class__.__ProjectNamesSet.remove(self.ProjectName)
-
-        if new_name in self.__class__.__ProjectNamesSet:
-            raise ValueError("ProjectName must be unique.")
-        else:
-            self.ProjectName = new_name
-            self.__class__.__ProjectNamesSet.add(self.ProjectName)
-
-
-    def setDescription(self, new_description):
-        self.ProjectDescription = new_description
-
-
-    def remove(self):
-        if self.ProjectName in self.__class__.__ProjectNamesSet:
-            self.__class__.__ProjectNamesSet.remove(self.ProjectName)
-
-        self.__class__.__TotalProjectNumber -= 1
-        del self
-
-
+    def __repr__(self):
+        return self.__str__()
