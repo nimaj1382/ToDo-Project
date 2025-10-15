@@ -52,13 +52,14 @@ class User:
     def show_projects(self) -> None:
         result_string = f"{self.username}'s Projects:\n"
         for project in self.projects:
-            result_string += f"{project.project_name} - {project.project_description}\n"
+            result_string += f"{project.project_id} - {project.project_name} - {project.project_description}\n"
         print(result_string)
 
     def remove_user(self) -> None:
+        if not self.projects:
+            return
         for project in self.projects:
             project.delete_project()
-        del self
 
     def __str__(self) -> str:
         return f"User: {self.username} - {self.full_name}"
@@ -70,11 +71,17 @@ class User:
 
 class Project:
 
+    _project_ids_set = set()
+    _id_counter = 1
+
     def __init__(self, project_name: str = None, project_description: str = None, container_user: "User" = None):
         self._project_name = None
         self._project_description = None
         self._project_tasks = []
         self._container_user = None
+        self._project_id = Project._id_counter
+        Project._project_ids_set.add(self._project_id)
+        Project._id_counter += 1
 
         if project_name:
             self.project_name = project_name
@@ -125,6 +132,13 @@ class Project:
                 self._container_user.projects.remove(self)
         self._container_user = value
 
+    @property
+    def project_id(self):
+        return self._project_id
+
+    @project_id.setter
+    def project_id(self, value: int) -> None:
+        raise AttributeError("Project ID is read-only and cannot be modified.")
 
     def set_name(self, new_name: str) -> None:
         self.project_name = new_name
@@ -133,11 +147,14 @@ class Project:
         self.project_description = new_description
 
     def delete_project(self):
-        for task in self.project_tasks:
-            task.delete_task()
-        if self.container_user and self in self.container_user.projects:
-            self.container_user.projects.remove(self)
-        del self
+        if self.project_tasks:
+            for task in self.project_tasks:
+                task.delete_task()
+        if self.container_user:
+            if self.container_user and self in self.container_user.projects:
+                self.container_user.projects.remove(self)
+            self.__class__._project_ids_set.remove(self._project_id)
+            self._container_user = None
 
     def add_task(self, task: "Task") -> None:
         """
@@ -162,7 +179,6 @@ class Project:
 
     def __repr__(self):
         return self.__str__()
-
 
 class Task:
 
@@ -245,9 +261,10 @@ class Task:
         self.task_due_date = new_due_date
 
     def delete_task(self) -> None:
+        if not self.container_project:
+            return
         if self.container_project and self in self.container_project.project_tasks:
             self.container_project.project_tasks.remove(self)
-        del self
 
     def __str__(self) -> str:
         return f"Task: {self.task_name} - {self.task_description} | Status: {self.task_status} | Due: {self.task_due_date}"
