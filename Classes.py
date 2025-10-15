@@ -148,6 +148,8 @@ class Project:
 
         if not isinstance(task, Task):
             raise ValueError("Only Task instances can be added.")
+        if task in self.project_tasks:
+            raise ValueError("Task is already in the project's task list.")
         load_dotenv()
         max_tasks = int(os.getenv("MAX_NUMBER_OF_TASKS", 20))
         if len(self.project_tasks) >= max_tasks:
