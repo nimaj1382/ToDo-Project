@@ -66,6 +66,9 @@ class User:
     def __repr__(self) -> str:
         return self.__str__()
 
+    def __del__(self):
+        self.remove_user()
+
 
 
 class Project:
@@ -163,6 +166,9 @@ class Project:
     def __repr__(self):
         return self.__str__()
 
+    def __del__(self):
+        self.delete_project()
+
 
 class Task:
 
@@ -254,3 +260,6 @@ class Task:
 
     def __repr__(self) -> str:
         return self.__str__()
+
+    def __del__(self):
+        self.delete_task()
