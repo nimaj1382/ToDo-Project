@@ -3,6 +3,45 @@ import os
 from datetime import datetime
 
 
+class User:
+
+    def __init__(self):
+        self._projects = []
+        self._username = None
+        self._full_name = None
+
+    @property
+    def projects(self):
+        return self._projects
+
+    @property
+    def username(self):
+        return self._username
+
+    @username.setter
+    def username(self, value: str) -> None:
+        self._username = value
+
+    @property
+    def full_name(self):
+        return self._full_name
+
+    @full_name.setter
+    def full_name(self, value: str) -> None:
+        self._full_name = value
+
+    def add_project(self, project: "Project") -> None:
+        if not isinstance(project, Project):
+            raise ValueError("Only Project instances can be added.")
+        load_dotenv()
+        max_projects = int(os.getenv("MAX_NUMBER_OF_PROJECTS", 30))
+        if len(self.projects) >= max_projects:
+            raise Exception(f"Cannot add more than {max_projects} projects to a user.")
+        for p in self.projects:
+            if p.project_name == project.project_name:
+                raise ValueError("Project name must be unique within the user's projects.")
+        self.projects.append(project)
+
 class Project:
 
     __total_project_number = 0
