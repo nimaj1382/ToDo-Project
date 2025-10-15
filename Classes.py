@@ -173,7 +173,7 @@ class Task:
 
     def set_status(self, new_status: str) -> None:
         """
-        Change the status of the task. Must be one of "todo", "doing", or "done".
+        Change the status of the task. Must be one of \"todo\", \"doing\", or \"done\".
         param new_status: New status string for the task.
         return: None
         """
