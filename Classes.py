@@ -44,7 +44,7 @@ class User:
         for p in self.projects:
             if p.project_name == project.project_name:
                 raise ValueError("Project name must be unique within the user's projects.")
-        if project.container_user:
+        if project.container_user and project in project.container_user.projects:
             project.container_user.projects.remove(project)
         project._container_user = self
         self.projects.append(project)
