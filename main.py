@@ -1,8 +1,8 @@
-from User import User
+from user import User
 
-from Project import Project
+from project import Project
 
-from Task import Task
+from task import Task
 
 if __name__ == "__main__":
     me = User(username="Nima")

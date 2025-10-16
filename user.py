@@ -2,7 +2,7 @@ import os
 
 from dotenv import load_dotenv
 
-from Exceptions import MaxLimitExceededError
+from exceptions import MaxLimitExceededError
 
 
 class User:
