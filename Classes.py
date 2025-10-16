@@ -50,6 +50,9 @@ class User:
         self.projects.append(project)
 
     def show_projects(self) -> None:
+        if len(self.projects) == 0:
+            print(f"{self.username} has no projects.")
+            return
         result_string = f"{self.username}'s Projects:\n"
         for project in self.projects:
             result_string += f"{project.project_name} - {project.project_description}\n"
@@ -60,7 +63,16 @@ class User:
             project.delete_project()
         del self
 
+    def number_of_tasks(self) -> int:
+        total_tasks = 0
+        for project in self.projects:
+            total_tasks += len(project.project_tasks)
+        return total_tasks
+
     def show_tasks(self) -> None:
+        if self.number_of_tasks() == 0:
+            print(f"{self.username} has no tasks across all projects.")
+            return
         print(f"{self.username}'s Tasks Across All Projects:")
         for project in self.projects:
             project.show_tasks()
@@ -163,6 +175,9 @@ class Project:
         self.project_tasks.append(task)
 
     def show_tasks(self) -> None:
+        if len(self.project_tasks) == 0:
+            print(f"No tasks in Project '{self.project_name}'.")
+            return
         result_string = f"Tasks in Project '{self.project_name}':\n"
         for task in self.project_tasks:
             result_string += f"{task.task_id} - {task.task_name} - {task.task_description} | Status: {task.task_status} | Due: {task.task_due_date}\n"
