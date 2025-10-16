@@ -60,6 +60,11 @@ class User:
             project.delete_project()
         del self
 
+    def show_tasks(self) -> None:
+        print(f"{self.username}'s Tasks Across All Projects:")
+        for project in self.projects:
+            project.show_tasks()
+
     def __str__(self) -> str:
         return f"User: {self.username} - {self.full_name}"
 
@@ -157,6 +162,12 @@ class Project:
         task.container_project = self
         self.project_tasks.append(task)
 
+    def show_tasks(self) -> None:
+        result_string = f"Tasks in Project '{self.project_name}':\n"
+        for task in self.project_tasks:
+            result_string += f"{task.task_id} - {task.task_name} - {task.task_description} | Status: {task.task_status} | Due: {task.task_due_date}\n"
+        print(result_string)
+
     def __str__(self):
         return f"Project: {self.project_name} - {self.project_description}"
 
@@ -166,12 +177,18 @@ class Project:
 
 class Task:
 
+    _task_ids_set = set()
+    _task_id_counter = 1
+
     def __init__(self, *, task_name: str = None, task_description: str = None, task_status: str = "todo", task_due_date: str = None):
         self._task_name = None
         self._task_description = None
         self._task_status = "todo"
         self._task_due_date = None
         self.container_project = None
+        self._task_id = Task._task_id_counter
+        self.__class__._task_ids_set.add(self._task_id)
+        self.__class__._task_id_counter += 1
 
         if task_name:
             self.task_name = task_name
@@ -227,6 +244,14 @@ class Task:
         except ValueError:
             raise ValueError("Task due date must be in 'YYYY-MM-DD' format.")
 
+    @property
+    def task_id(self):
+        return self._task_id
+
+    @task_id.setter
+    def task_id(self, value: int) -> None:
+        raise AttributeError("Task ID is read-only and cannot be modified.")
+
     def set_name(self, new_name: str) -> None:
         self.task_name = new_name
 
@@ -247,6 +272,8 @@ class Task:
     def delete_task(self) -> None:
         if self.container_project and self in self.container_project.project_tasks:
             self.container_project.project_tasks.remove(self)
+        if self.__class__._task_ids_set:
+            self.__class__._task_ids_set.remove(self.task_id)
         del self
 
     def __str__(self) -> str:
