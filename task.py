@@ -5,11 +5,11 @@ class Task:
     _task_ids_set = set()
     _task_id_counter = 1
 
-    def __init__(self, *, task_name: str = None, task_description: str = None,
+    def __init__(self, *, task_name: str, task_description: str = None,
                  task_status: str = "todo", task_due_date: str = None):
         """
         Initialize a Task instance with optional name, description, status, and due date.
-        param task_name: Optional name for the task.
+        param task_name: Name for the task.
         param task_description: Optional description for the task.
         param task_status: Optional status for the task. Must be
             one of "todo", "doing", or "done". Default is "todo".

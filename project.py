@@ -12,11 +12,11 @@ from exceptions import MaxLimitExceededError
 
 class Project:
 
-    def __init__(self, project_name: str = None, project_description: str = None,
+    def __init__(self, *, project_name: str, project_description: str = None,
                  container_user: "User" = None):
         """
         Initialize a Project instance with optional name, description, and associated user.
-        param project_name: Optional name for the project.
+        param project_name: Name for the project.
         param project_description: Optional description for the project.
         param container_user: Optional User instance to associate with the project.
         return: None

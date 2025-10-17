@@ -7,10 +7,10 @@ from exceptions import MaxLimitExceededError
 
 class User:
 
-    def __init__(self, *, username: str = None, full_name: str = None):
+    def __init__(self, *, username: str, full_name: str = None):
         """
         Initialize a User instance with optional username and full name.
-        param username: Optional username for the user.
+        param username: Username for the user.
         param full_name: Optional full name for the user.
         return: None
         """
