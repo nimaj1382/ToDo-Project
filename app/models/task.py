@@ -24,5 +24,5 @@ class Task(Base):
     project = relationship("Project", back_populates="tasks")
 
     __table_args__ = (
-        UniqueConstraint('project_id', 'title', name='uq_project_task_name'),
+        UniqueConstraint('project_id', 'name', name='uq_project_task_name'),
     )
