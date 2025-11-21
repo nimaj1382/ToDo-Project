@@ -8,7 +8,9 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "python-dotenv (>=1.1.1,<2.0.0)"
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "sqlalchemy (>=2.0.44,<3.0.0)",
+    "alembic (>=1.17.2,<2.0.0)"
 ]
 
 
