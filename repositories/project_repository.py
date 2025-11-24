@@ -27,3 +27,6 @@ class ProjectRepository:
     def set_project_description(self, project: Project, new_project_description: str):
         project.description = new_project_description
         self.session.commit()
+
+    def project_tasks_list(self, project: Project) -> List["Task"]:
+        return project.tasks
