@@ -16,14 +16,14 @@ class ProjectRepository:
         self.session.add(project)
         self.session.commit()
 
+    def delete_project(self, project: Project):
+        self.session.delete(project)
+        self.session.commit()
+
     def set_project_name(self, project: Project, new_project_name: str):
         project.name = new_project_name
         self.session.commit()
 
     def set_project_description(self, project: Project, new_project_description: str):
         project.description = new_project_description
-        self.session.commit()
-
-    def delete_project(self, project: Project):
-        self.session.delete(project)
         self.session.commit()
