@@ -29,11 +29,11 @@ class TaskRepository:
         task.description = new_task_description
         self.session.commit()
 
-    def set_task_status(self, task: Task, new_task_status: TaskStatus):
+    def set_task_status(self, task: Task, new_task_status: TaskStatus) -> None:
         task.status = new_task_status
         self.session.commit()
 
-    def set_task_due_date(self, task: Task, new_task_due_date: datetime):
+    def set_task_due_date(self, task: Task, new_task_due_date: datetime) -> None:
         task.due_date = new_task_due_date
         self.session.commit()
 
