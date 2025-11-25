@@ -89,3 +89,15 @@ class ProjectService:
                                         task_due_date=task_due_date,
                                         task_project_id=project.id)
 
+    def project_tasks_list(self, project: Project) -> List['Task']:
+        return list(project.tasks)
+
+    def project_tasks_list_by_id(self, project_id: int) -> List['Task']:
+        project = self.get_project_by_id(project_id)
+        if project:
+            return self.project_tasks_list(project)
+
+    def project_tasks_list_by_name(self, project_name: str) -> Optional[List['Task']]:
+        project = self.get_project_by_name(project_name)
+        if project:
+            return self.project_tasks_list(project)
