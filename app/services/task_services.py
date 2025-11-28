@@ -48,21 +48,21 @@ class TaskService:
 
         # Ensure that project id is valid
 
-        if project_service.get_project_by_id(project_id = task_project_id) == None:
+        if project_service.get_project_by_id(project_id = task_project_id) is None:
             raise ExistanceError("task_project_id is not valid. "
                                  "There is no project with the given id.")
 
         task = Task(name = task_name, description = task_description,
                     status = task_status, due_date = task_due_date,
                     project_id = task_project_id)
-
         self.repository.add_task(task)
+        return task
 
     def get_task_by_id(self, task_id: int) -> Task:
         return self.repository.get_task_by_id(task_id)
 
     def get_tasks_by_name(self, task_name: str) -> List[Task]:
-        return self.repository.get_task_by_name(task_name)
+        return self.repository.get_tasks_by_name(task_name)
 
     def delete_task(self, task: Task) -> None:
         self.repository.delete_task(task)
