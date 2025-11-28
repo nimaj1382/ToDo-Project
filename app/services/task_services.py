@@ -29,7 +29,7 @@ class TaskService:
 
         # Check uniqueness of task name
 
-        tasks_with_same_name = self.get_task_by_name(task_name)
+        tasks_with_same_name = self.get_tasks_by_name(task_name)
         for task in tasks_with_same_name:
             if task.project_id == task_project_id :
                 raise UniquenessError("Task name within a project "
