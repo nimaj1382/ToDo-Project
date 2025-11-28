@@ -69,3 +69,11 @@ class TaskService:
 
     def delete_task_by_id(self, task_id: int) -> None:
         self.delete_task(self.get_task_by_id(task_id))
+
+    def set_task_name(self, task: Task, new_task_name: str) -> None:
+        self.repository.set_task_name(task, new_task_name)
+
+    def set_task_name_by_id(self, task_id: int, new_task_name: str) -> None:
+        task = self.get_task_by_id(task_id)
+        if task is None:
+            raise ExistanceError("task with given id does not exist.")
