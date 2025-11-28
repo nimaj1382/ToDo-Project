@@ -23,7 +23,7 @@ class ProjectService:
 
         # Check uniqueness of project name
 
-        if self.get_project_by_name != None:
+        if self.get_project_by_name(project_name) != None:
             raise UniquenessError("Project name must be unique. The given project name is already in use.")
 
         project = Project(name = project_name, description = project_description)
