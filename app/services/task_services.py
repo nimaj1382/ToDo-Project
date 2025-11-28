@@ -87,3 +87,17 @@ class TaskService:
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_description(task, new_task_description)
+
+    def set_task_status(self, task: Task, task_status: TaskStatus) -> None:
+        if not isinstance(task_status, TaskStatus):
+            raise ValueError("task_status must be an instance of TaskStatus.")
+        self.repository.set_task_status(task, task_status)
+
+    def set_task_status_by_id(self, task_id: int, task_status: TaskStatus) -> None:
+        if not isinstance(task_status, TaskStatus):
+            raise ValueError("task_status must be an instance of TaskStatus.")
+        task = self.get_task_by_id(task_id)
+        if task is None:
+            raise ExistanceError("task with given id does not exist.")
+        self.set_task_status(task, task_status)
+
