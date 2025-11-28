@@ -89,7 +89,7 @@ class ProjectService:
                                         task_project_id=project.id)
 
     def project_tasks_list(self, project: Project) -> List['Task']:
-        return list(project.tasks)
+        return self.repository.project_tasks_list(project)
 
     def project_tasks_list_by_id(self, project_id: int) -> List['Task']:
         project = self.get_project_by_id(project_id)
