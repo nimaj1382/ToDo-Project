@@ -40,3 +40,7 @@ class TaskRepository:
         task.due_date = new_task_due_date
         self.session.commit()
 
+    def set_task_project_id(self, task: Task, task_project_id: int):
+        task.project_id = task_project_id
+        self.session.commit()
+
