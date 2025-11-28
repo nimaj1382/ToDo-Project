@@ -12,6 +12,9 @@ class ProjectRepository:
     def get_project_by_id(self, project_id: int) -> Optional[Project]:
         return self.session.query(Project).filter(Project.id == project_id).first()
 
+    def get_project_by_name(self, project_name: str) -> Optional[Project]:
+        return self.session.query(Project).filter(Project.name == project_name).first()
+
     def add_project(self, project: Project) -> None:
         self.session.add(project)
         self.session.commit()
