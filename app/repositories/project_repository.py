@@ -32,4 +32,4 @@ class ProjectRepository:
         self.session.commit()
 
     def project_tasks_list(self, project: Project) -> List["Task"]:
-        return project.tasks
+        return list(project.tasks)
