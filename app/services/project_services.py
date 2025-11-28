@@ -110,9 +110,23 @@ class ProjectService:
             raise ExistanceError("project with given id does not exist.")
         self.set_project_name(project, new_project_name)
 
-    def set_project_name_by_name(self, project_name: str, new_project_name: str):
+    def set_project_name_by_name(self, project_name: str, new_project_name: str) -> None:
         project = self.get_project_by_name(project_name)
         if project is None:
             raise ExistanceError("project with given name does not exist.")
         self.set_project_name(project, new_project_name)
 
+    def set_project_description(self, project: Project, new_project_description: str) -> None:
+        self.repository.set_project_description(project, new_project_description)
+
+    def set_project_description_by_id(self, project_id: int, new_project_description: str) -> None:
+        project = self.get_project_by_id(project_id)
+        if project is None:
+            raise ExistanceError("project with given id does not exist.")
+        self.set_project_description(project, new_project_description)
+
+    def set_project_description_by_name(self, project_name: str, new_project_description: str) -> None:
+        project = self.get_project_by_name(project_name)
+        if project is None:
+            raise ExistanceError("project with given name does not exist.")
+        self.set_project_description(project, new_project_description)
