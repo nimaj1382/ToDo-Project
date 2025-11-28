@@ -34,8 +34,7 @@ class ProjectService:
         return self.repository.get_project_by_id(project_id)
 
     def get_project_by_name(self, project_name: str) -> Optional[Project]:
-        """TODO"""
-        pass
+        self.repository.get_project_by_name(project_name)
 
     def delete_project(self, project: Project) -> None:
         self.repository.delete_project(project)
