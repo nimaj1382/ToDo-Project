@@ -120,4 +120,4 @@ class TaskService:
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
-        self.set_task_project_id(task, task_project_id)
+        self.set_task_project_id(task, task_project_id, project_service)
