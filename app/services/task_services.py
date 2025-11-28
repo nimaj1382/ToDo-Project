@@ -110,3 +110,14 @@ class TaskService:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_due_date(task, task_due_date)
 
+    def set_task_project_id(self, task: Task, task_project_id: int, project_service: 'ProjectService') -> None:
+        project = project_service.get_project_by_id(task_project_id)
+        if project is None:
+            raise ExistanceError("project with given id does not exist.")
+        self.repository.set_task_project_id(task, task_project_id)
+
+    def set_task_project_id_by_id(self, task_id: int, task_project_id: int, project_service: 'ProjectService') -> None:
+        task = self.get_task_by_id(task_id)
+        if task is None:
+            raise ExistanceError("task with given id does not exist.")
+        self.set_task_project_id(task, task_project_id)
