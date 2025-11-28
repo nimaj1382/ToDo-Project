@@ -13,6 +13,9 @@ class TaskRepository:
     def get_task_by_id(self, task_id) -> Optional[Task]:
         return self.session.query(Task).filter(Task.id == task_id).first()
 
+    def get_tasks_by_name(self, task_name: str) -> List[Task]:
+        return list(self.session.query(Task).filter(Task.name == task_name))
+
     def add_task(self, task: Task) -> None:
         self.session.add(task)
         self.session.commit()
