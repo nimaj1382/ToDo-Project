@@ -70,29 +70,34 @@ class ProjectService:
                             task_description: str = None,
                             task_status: 'TaskStatus' = TaskStatus.TODO,
                             task_due_date: datetime = None,
-                            task_project_id: int,
                             task_service: 'TaskService') -> 'Task':
 
-        return task_service.create_task(task_name=task_name,
-                                        task_description=task_description,
-                                        task_status=task_status,
-                                        task_due_date=task_due_date,
-                                        task_project_id=project_id)
+        project = self.get_project_by_id(project_id)
+        if project is None:
+            raise ExistanceError("project with given id does not exist.")
+        return self.add_task_to_project(project = project,
+                                        task_name = task_name,
+                                        task_description = task_description,
+                                        task_status = task_status,
+                                        task_due_date = task_due_date,
+                                        task_service = task_service)
 
     def add_task_to_project_by_name(self, project_name: str, *,
                             task_name: str,
                             task_description: str = None,
                             task_status: 'TaskStatus' = TaskStatus.TODO,
                             task_due_date: datetime = None,
-                            task_project_id: int,
                             task_service: 'TaskService') -> 'Task':
 
         project = self.get_project_by_name(project_name)
-        return task_service.create_task(task_name=task_name,
+        if project is None:
+            raise ExistanceError("project with given name does not exist.")
+        return self.add_task_to_project(project=project,
+                                        task_name=task_name,
                                         task_description=task_description,
                                         task_status=task_status,
                                         task_due_date=task_due_date,
-                                        task_project_id=project.id)
+                                        task_service=task_service)
 
     def project_tasks_list(self, project: Project) -> List['Task']:
         return self.repository.project_tasks_list(project)
