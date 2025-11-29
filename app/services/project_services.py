@@ -102,6 +102,8 @@ class ProjectService:
             return self.project_tasks_list(project)
 
     def set_project_name(self, project: Project, new_project_name: str) -> None:
+        if self.get_project_by_name(new_project_name):
+            raise UniquenessError("Project name must be unique. The given project name is already in use.")
         self.repository.set_project_name(project, new_project_name)
 
     def set_project_name_by_id(self, project_id: int, new_project_name: str) -> None:
