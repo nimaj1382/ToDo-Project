@@ -104,13 +104,15 @@ class ProjectService:
 
     def project_tasks_list_by_id(self, project_id: int) -> List['Task']:
         project = self.get_project_by_id(project_id)
-        if project:
-            return self.project_tasks_list(project)
+        if project is None:
+            raise ExistanceError("project with given id does not exist.")
+        return self.project_tasks_list(project)
 
     def project_tasks_list_by_name(self, project_name: str) -> Optional[List['Task']]:
         project = self.get_project_by_name(project_name)
-        if project:
-            return self.project_tasks_list(project)
+        if project is None:
+            raise ExistanceError("project with given name does not exist.")
+        return self.project_tasks_list(project)
 
     def set_project_name(self, project: Project, new_project_name: str) -> None:
         if self.get_project_by_name(new_project_name):
