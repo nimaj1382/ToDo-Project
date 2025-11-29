@@ -40,10 +40,16 @@ class ProjectService:
         self.repository.delete_project(project)
 
     def delete_project_by_id(self, project_id: int) -> None:
-        self.delete_project(self.get_project_by_id(project_id))
+        project = self.get_project_by_id(project_id)
+        if project is None:
+            raise ExistanceError("project with given id does not exist.")
+        self.delete_project(project)
 
     def delete_project_by_name(self, project_name: str) -> None:
-        self.delete_project(self.get_project_by_name(project_name))
+        project = self.get_project_by_name(project_name)
+        if project is None:
+            raise ExistanceError("project with given name does not exist.")
+        self.delete_project(project)
 
     def add_task_to_project(self, project: Project, *,
                             task_name: str,
