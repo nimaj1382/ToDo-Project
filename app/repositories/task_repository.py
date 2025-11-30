@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Type, Any
 
 from sqlalchemy.orm import Session
 from app.models.task import Task, TaskStatus
@@ -13,7 +13,7 @@ class TaskRepository:
     def get_task_by_id(self, task_id) -> Optional[Task]:
         return self.session.query(Task).filter(Task.id == task_id).first()
 
-    def get_tasks_by_name(self, task_name: str) -> List[Task]:
+    def get_tasks_by_name(self, task_name: str) -> list[Type[Task]]:
         return list(self.session.query(Task).filter(Task.name == task_name))
 
     def add_task(self, task: Task) -> None:
@@ -44,3 +44,5 @@ class TaskRepository:
         task.project_id = task_project_id
         self.session.commit()
 
+    def all_tasks(self) -> list[Type[Task]]:
+        return list(self.session.query(Task))
