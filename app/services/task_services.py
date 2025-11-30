@@ -158,7 +158,7 @@ class TaskService:
         for task in all_tasks:
             self.print_task(task, indent)
 
-    def print_task(self, task: Type[Task], indent: int = 0):
+    def print_task(self, task: Type[Task], indent: int = 0) -> None:
         load_dotenv()
         max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
