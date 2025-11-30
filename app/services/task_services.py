@@ -124,6 +124,13 @@ class TaskService:
         project = project_service.get_project_by_id(task_project_id)
         if project is None:
             raise ExistanceError("project with given id does not exist.")
+        # Ensure task name is unique within the destination project
+        tasks_with_same_name = self.get_tasks_by_name(task.name)
+        for task in tasks_with_same_name:
+            if task.project_id == task_project_id:
+                raise UniquenessError("Task name within a project "
+                                      "must be unique. The given task "
+                                      "name for the given project is already in use.")
         self.repository.set_task_project_id(task, task_project_id)
 
     def set_task_project_id_by_id(self, task_id: int, task_project_id: int, project_service: 'ProjectService') -> None:
