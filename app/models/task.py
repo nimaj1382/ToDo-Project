@@ -9,6 +9,13 @@ class TaskStatus(enum.Enum):
     DOING = "doing"
     DONE = "done"
 
+    def __str__(self):
+        if self == self.TODO:
+            return "todo"
+        if self == self.DOING:
+            return "doing"
+        if self == self.Done:
+            return "done"
 
 class Task(Base):
     __tablename__ = "tasks"
