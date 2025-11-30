@@ -1,5 +1,9 @@
+import os
+import textwrap
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Type
+
+from dotenv import load_dotenv
 
 from app.models.project import Project
 from app.models.task import TaskStatus
@@ -148,3 +152,30 @@ class ProjectService:
         if project is None:
             raise ExistanceError("project with given name does not exist.")
         self.set_project_description(project, new_project_description)
+
+    def all_projects(self) -> List[Type[Project]]:
+        return self.repository.all_projects()
+
+    def print_all_projects(self, indent:int = 0) -> None:
+        all_projects = self.all_projects()
+        load_dotenv()
+        max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
+        max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
+        tab_indent = '\t' * indent
+
+        print(f"{tab_indent}{'project id':^15} \t {'project name':^{max_name_length}} \t {'project description':^{max_description_length}}")
+        print()
+
+        for project in all_projects:
+            self.print_project(project, indent)
+
+    def print_project(self, project: Type[Project], indent:int = 0) -> None:
+        load_dotenv()
+        max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
+        max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
+        max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
+        tab_indent = '\t' * indent
+
+        display_name = str(project.name)[:max_name_length] + textwrap.shorten(str(project.name)[max_name_length + 1:], width=3, placeholder="...")
+        display_description = str(project.description)[:max_description_length] + textwrap.shorten(str(project.description)[max_description_length + 1:], width=3, placeholder="...")
+        print(f"{tab_indent}{project.id:<15} \t {display_name:<{max_name_length}} \t {display_description:<{max_description_length}}")
