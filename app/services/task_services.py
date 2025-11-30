@@ -74,6 +74,13 @@ class TaskService:
         self.delete_task(task)
 
     def set_task_name(self, task: Task, new_task_name: str) -> None:
+        # Ensure task name is unique within the project
+        tasks_with_same_name = self.get_tasks_by_name(new_task_name)
+        for task in tasks_with_same_name:
+            if task.project_id == task.project_id:
+                raise UniquenessError("Task name within a project "
+                                      "must be unique. The given task "
+                                      "name for the given project is already in use.")
         self.repository.set_task_name(task, new_task_name)
 
     def set_task_name_by_id(self, task_id: int, new_task_name: str) -> None:
