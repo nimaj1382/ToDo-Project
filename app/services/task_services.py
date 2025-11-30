@@ -1,5 +1,9 @@
-from typing import Optional, List
+import os
+import textwrap
+from typing import Optional, List, Type
 from datetime import datetime
+
+from dotenv import load_dotenv
 
 from app.models.task import Task, TaskStatus
 from app.repositories.task_repository import TaskRepository
@@ -138,3 +142,21 @@ class TaskService:
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_project_id(task, task_project_id, project_service)
+
+    def all_tasks(self) -> List[Type[Task]]:
+        return self.repository.all_tasks()
+
+    def print_all_tasks(self, indent: int = 0) -> None:
+        all_tasks = self.all_tasks()
+        load_dotenv()
+        max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
+        max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
+        max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
+
+        print(f"{'task name':^{max_name_length}} \t {'task description':^{max_description_length}} \t {'task status':^10} \t {'task due date':^{max_due_date_length}} \t {'task project id':^15}")
+        print()
+        for task in all_tasks:
+            display_name = str(task.name)[:max_name_length] + textwrap.shorten(str(task.name)[max_name_length + 1:], width = 3, placeholder="...")
+            display_description = str(task.description)[:max_description_length] + textwrap.shorten(str(task.description)[max_description_length + 1:], width = 3, placeholder="...")
+            display_due_date = str(task.due_date)[:max_due_date_length] + textwrap.shorten(str(task.due_date)[max_due_date_length + 1:], width = 3, placeholder="...")
+            print(f"{display_name:<{max_name_length}} \t {display_description:<{max_description_length}} \t {task.status:<10} \t {display_due_date:<{max_due_date_length}} \t {task.project_id:<15}")
