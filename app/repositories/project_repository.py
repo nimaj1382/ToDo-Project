@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Type
 
 from sqlalchemy.orm import Session
 from app.models.project import Project
@@ -33,3 +33,6 @@ class ProjectRepository:
 
     def project_tasks_list(self, project: Project) -> List["Task"]:
         return list(project.tasks)
+
+    def all_projects(self) -> List[Type[Project]]:
+        return list(self.session.query(Project))
