@@ -163,7 +163,7 @@ class ProjectService:
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
         tab_indent = '\t' * indent
 
-        print(f"{tab_indent}{'project id':^15} \t {'project name':^{max_name_length}} \t {'project description':^{max_description_length}}")
+        print(f"{tab_indent}{'project id':^15} \t|{'project name':^{max_name_length}} \t|{'project description':^{max_description_length}}")
         print()
 
         for project in all_projects:
@@ -178,7 +178,7 @@ class ProjectService:
 
         display_name = str(project.name)[:max_name_length] + textwrap.shorten(str(project.name)[max_name_length + 1:], width=3, placeholder="...")
         display_description = str(project.description)[:max_description_length] + textwrap.shorten(str(project.description)[max_description_length + 1:], width=3, placeholder="...")
-        print(f"{tab_indent}{project.id:<15} \t {display_name:<{max_name_length}} \t {display_description:<{max_description_length}}")
+        print(f"{tab_indent}{project.id:<15} \t|{display_name:<{max_name_length}} \t|{display_description:<{max_description_length}}")
 
     def print_all_projects_with_tasks(self, task_service: 'TaskService', indent: int = 0):
         load_dotenv()
@@ -189,7 +189,7 @@ class ProjectService:
 
         all_projects = self.all_projects()
 
-        print(f"{tab_indent}{'project id':^15} \t {'project name':^{max_name_length}} \t {'project description':^{max_description_length}}")
+        print(f"{tab_indent}{'project id':^15} \t|{'project name':^{max_name_length}} \t|{'project description':^{max_description_length}}")
         print()
 
         for project in all_projects:

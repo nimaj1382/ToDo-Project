@@ -153,7 +153,7 @@ class TaskService:
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
         max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
         tab_indent = '\t' * indent
-        print(f"{tab_indent}{'task id':^15} \t {'task name':^{max_name_length}} \t {'task description':^{max_description_length}} \t {'task status':^10} \t {'task due date':^{max_due_date_length}} \t {'task project id':^15}")
+        print(f"{tab_indent}{'task id':^15} \t|{'task name':^{max_name_length}} \t|{'task description':^{max_description_length}} \t|{'task status':^10} \t|{'task due date':^{max_due_date_length}} \t|{'task project id':^15}")
         print()
         for task in all_tasks:
             self.print_task(task, indent)
@@ -168,4 +168,4 @@ class TaskService:
         display_name = str(task.name)[:max_name_length] + textwrap.shorten(str(task.name)[max_name_length + 1:], width=3, placeholder="...")
         display_description = str(task.description)[:max_description_length] + textwrap.shorten(str(task.description)[max_description_length + 1:], width=3, placeholder="...")
         display_due_date = str(task.due_date)[:max_due_date_length] + textwrap.shorten(str(task.due_date)[max_due_date_length + 1:], width=3, placeholder="...")
-        print(f"{tab_indent}{task.id:<15} \t {display_name:<{max_name_length}} \t {display_description:<{max_description_length}} \t {task.status:<10} \t {display_due_date:<{max_due_date_length}} \t {task.project_id:<15}")
+        print(f"{tab_indent}{task.id:<15} \t|{display_name:<{max_name_length}} \t|{display_description:<{max_description_length}} \t|{task.status:<10} \t|{display_due_date:<{max_due_date_length}} \t|{task.project_id:<15}")
