@@ -85,8 +85,14 @@ def main():
     task_set_status.add_argument("--id", type=int, required=True, help="Task id")
     task_set_status.add_argument("--status", required=True, choices=["todo", "doing", "done"], help="New task status")
 
+    # Add a top-level command for listing all projects with their tasks
+    list_all_parser = subparsers.add_parser("list_all", help="List all projects and their tasks")
+
     args = parser.parse_args()
 
+    if args.entity == "list_all":
+        project_service.print_all_projects_with_tasks(task_service)
+        return
     if args.entity == "project":
         if args.action == "create":
             try:
