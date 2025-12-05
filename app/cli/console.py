@@ -283,7 +283,7 @@ def main():
                 closed_at = None
                 if args.closed_at:
                     from datetime import datetime
-                    closed_at = datetime.strptime(args.closed_at, "%Y-%m-%d %H:%M:%S")
+                    closed_at = datetime.strptime(args.closed_at, "%Y-%m-%d")
                 task_service.set_task_closed_at_by_id(args.id, closed_at)
                 print("Task closed_at updated successfully.")
             except Exception as e:
