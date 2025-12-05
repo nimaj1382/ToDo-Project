@@ -75,6 +75,16 @@ def main():
     task_set_desc.add_argument("--id", type=int, required=True, help="Task id")
     task_set_desc.add_argument("--new_description", required=True, help="New task description")
 
+    # task set due date
+    task_set_due_date = task_subparsers.add_parser("set_due_date", help="Set a new due date for a task by id")
+    task_set_due_date.add_argument("--id", type=int, required=True, help="Task id")
+    task_set_due_date.add_argument("--due_date", required=True, help="New due date (YYYY-MM-DD)")
+
+    # task set status
+    task_set_status = task_subparsers.add_parser("set_status", help="Set a new status for a task by id")
+    task_set_status.add_argument("--id", type=int, required=True, help="Task id")
+    task_set_status.add_argument("--status", required=True, choices=["todo", "doing", "done"], help="New task status")
+
     args = parser.parse_args()
 
     if args.entity == "project":
@@ -153,6 +163,24 @@ def main():
             try:
                 task_service.set_task_description_by_id(args.id, args.new_description)
                 print("Task description updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_due_date":
+            try:
+                due_date = None
+                if args.due_date:
+                    from datetime import datetime
+                    due_date = datetime.strptime(args.due_date, "%Y-%m-%d")
+                task_service.set_task_due_date_by_id(args.id, due_date)
+                print("Task due date updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_status":
+            try:
+                from app.models.task import TaskStatus
+                status = TaskStatus(args.status)
+                task_service.set_task_status_by_id(args.id, status)
+                print("Task status updated successfully.")
             except Exception as e:
                 print(f"Error: {e}")
 
