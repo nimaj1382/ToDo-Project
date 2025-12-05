@@ -33,6 +33,20 @@ def main():
     project_delete_group.add_argument("--id", type=int, help="Project id")
     project_delete_group.add_argument("--name", type=str, help="Project name")
 
+    # project set name
+    project_set_name = project_subparsers.add_parser("set_name", help="Set a new name for a project by id or name")
+    project_set_name_group = project_set_name.add_mutually_exclusive_group(required=True)
+    project_set_name_group.add_argument("--id", type=int, help="Project id")
+    project_set_name_group.add_argument("--name", type=str, help="Project name")
+    project_set_name.add_argument("--new_name", required=True, help="New project name")
+
+    # project set description
+    project_set_desc = project_subparsers.add_parser("set_description", help="Set a new description for a project by id or name")
+    project_set_desc_group = project_set_desc.add_mutually_exclusive_group(required=True)
+    project_set_desc_group.add_argument("--id", type=int, help="Project id")
+    project_set_desc_group.add_argument("--name", type=str, help="Project name")
+    project_set_desc.add_argument("--new_description", required=True, help="New project description")
+
     # Task commands
     task_parser = subparsers.add_parser("task", help="Task operations")
     task_subparsers = task_parser.add_subparsers(dest="action", required=True)
@@ -50,6 +64,16 @@ def main():
     # task delete (by id)
     task_delete = task_subparsers.add_parser("delete", help="Delete a task by id")
     task_delete.add_argument("--id", type=int, required=True, help="Task id")
+
+    # task set name
+    task_set_name = task_subparsers.add_parser("set_name", help="Set a new name for a task by id")
+    task_set_name.add_argument("--id", type=int, required=True, help="Task id")
+    task_set_name.add_argument("--new_name", required=True, help="New task name")
+
+    # task set description
+    task_set_desc = task_subparsers.add_parser("set_description", help="Set a new description for a task by id")
+    task_set_desc.add_argument("--id", type=int, required=True, help="Task id")
+    task_set_desc.add_argument("--new_description", required=True, help="New task description")
 
     args = parser.parse_args()
 
@@ -74,6 +98,30 @@ def main():
                 print("Project deleted successfully.")
             except Exception as e:
                 print(f"Error: {e}")
+        elif args.action == "set_name":
+            if args.id is not None and args.name is not None:
+                print("Error: Only one of --id or --name should be provided.")
+                return
+            try:
+                if args.id is not None:
+                    project_service.set_project_name_by_id(args.id, args.new_name)
+                elif args.name is not None:
+                    project_service.set_project_name_by_name(args.name, args.new_name)
+                print("Project name updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_description":
+            if args.id is not None and args.name is not None:
+                print("Error: Only one of --id or --name should be provided.")
+                return
+            try:
+                if args.id is not None:
+                    project_service.set_project_description_by_id(args.id, args.new_description)
+                elif args.name is not None:
+                    project_service.set_project_description_by_name(args.name, args.new_description)
+                print("Project description updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
     elif args.entity == "task":
         if args.action == "create":
             due_date = None
@@ -93,6 +141,18 @@ def main():
             try:
                 task_service.delete_task_by_id(args.id)
                 print("Task deleted successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_name":
+            try:
+                task_service.set_task_name_by_id(args.id, args.new_name)
+                print("Task name updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_description":
+            try:
+                task_service.set_task_description_by_id(args.id, args.new_description)
+                print("Task description updated successfully.")
             except Exception as e:
                 print(f"Error: {e}")
 
