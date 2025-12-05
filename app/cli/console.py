@@ -1,0 +1,72 @@
+import argparse
+from datetime import datetime
+from app.services import *
+from app.db.session import SessionLocal
+from app.repositories.project_repository import ProjectRepository
+from app.repositories.task_repository import TaskRepository
+
+session = SessionLocal()
+project_repo = ProjectRepository(session)
+task_repo = TaskRepository(session)
+project_service = ProjectService(project_repo)
+task_service = TaskService(task_repo)
+
+def main():
+    parser = argparse.ArgumentParser(description="ToDo List CLI")
+    subparsers = parser.add_subparsers(dest="entity", required=True)
+
+    # Project commands
+    project_parser = subparsers.add_parser("project", help="Project operations")
+    project_subparsers = project_parser.add_subparsers(dest="action", required=True)
+
+    # project create
+    project_create = project_subparsers.add_parser("create", help="Create a new project")
+    project_create.add_argument("--name", required=True, help="Project name")
+    project_create.add_argument("--description", default="", help="Project description")
+
+    # project list
+    project_list = project_subparsers.add_parser("list", help="List all projects")
+
+    # Task commands
+    task_parser = subparsers.add_parser("task", help="Task operations")
+    task_subparsers = task_parser.add_subparsers(dest="action", required=True)
+
+    # task create
+    task_create = task_subparsers.add_parser("create", help="Create a new task")
+    task_create.add_argument("--project_id", type=int, required=True, help="Project ID for the task")
+    task_create.add_argument("--name", required=True, help="Task name")
+    task_create.add_argument("--description", default="", help="Task description")
+    task_create.add_argument("--due_date", default=None, help="Task due date (YYYY-MM-DD)")
+
+    # task list
+    task_list = task_subparsers.add_parser("list", help="List all tasks")
+
+    args = parser.parse_args()
+
+    if args.entity == "project":
+        if args.action == "create":
+            try:
+                project_service.create_project(project_name=args.name, project_description=args.description)
+                print("Project created successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "list":
+            project_service.print_all_projects()
+    elif args.entity == "task":
+        if args.action == "create":
+            due_date = None
+            if args.due_date:
+                try:
+                    due_date = datetime.strptime(args.due_date, "%Y-%m-%d")
+                except ValueError:
+                    print("Invalid date format. Skipping due date.")
+            try:
+                task_service.create_task(task_name=args.name, task_description=args.description, task_project_id=args.project_id, task_due_date=due_date, project_service=project_service)
+                print("Task created successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "list":
+            task_service.print_all_tasks()
+
+if __name__ == "__main__":
+    main()
