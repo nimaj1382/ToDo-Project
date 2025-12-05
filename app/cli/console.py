@@ -27,6 +27,12 @@ def main():
     # project list
     project_list = project_subparsers.add_parser("list", help="List all projects")
 
+    # project delete (by id or name)
+    project_delete = project_subparsers.add_parser("delete", help="Delete a project by id or name")
+    project_delete_group = project_delete.add_mutually_exclusive_group(required=True)
+    project_delete_group.add_argument("--id", type=int, help="Project id")
+    project_delete_group.add_argument("--name", type=str, help="Project name")
+
     # Task commands
     task_parser = subparsers.add_parser("task", help="Task operations")
     task_subparsers = task_parser.add_subparsers(dest="action", required=True)
@@ -41,6 +47,10 @@ def main():
     # task list
     task_list = task_subparsers.add_parser("list", help="List all tasks")
 
+    # task delete (by id)
+    task_delete = task_subparsers.add_parser("delete", help="Delete a task by id")
+    task_delete.add_argument("--id", type=int, required=True, help="Task id")
+
     args = parser.parse_args()
 
     if args.entity == "project":
@@ -52,6 +62,18 @@ def main():
                 print(f"Error: {e}")
         elif args.action == "list":
             project_service.print_all_projects()
+        elif args.action == "delete":
+            if args.id is not None and args.name is not None:
+                print("Error: Only one of --id or --name should be provided.")
+                return
+            try:
+                if args.id is not None:
+                    project_service.delete_project_by_id(args.id, task_service)
+                elif args.name is not None:
+                    project_service.delete_project_by_name(args.name, task_service)
+                print("Project deleted successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
     elif args.entity == "task":
         if args.action == "create":
             due_date = None
@@ -67,6 +89,12 @@ def main():
                 print(f"Error: {e}")
         elif args.action == "list":
             task_service.print_all_tasks()
+        elif args.action == "delete":
+            try:
+                task_service.delete_task_by_id(args.id)
+                print("Task deleted successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
