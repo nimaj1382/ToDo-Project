@@ -47,6 +47,12 @@ def main():
     project_set_desc_group.add_argument("--name", type=str, help="Project name")
     project_set_desc.add_argument("--new_description", required=True, help="New project description")
 
+    # project find
+    project_find = project_subparsers.add_parser("find", help="Find a project by id or name")
+    project_find_group = project_find.add_mutually_exclusive_group(required=True)
+    project_find_group.add_argument("--id", type=int, help="Project id")
+    project_find_group.add_argument("--name", type=str, help="Project name")
+
     # Task commands
     task_parser = subparsers.add_parser("task", help="Task operations")
     task_subparsers = task_parser.add_subparsers(dest="action", required=True)
@@ -84,6 +90,12 @@ def main():
     task_set_status = task_subparsers.add_parser("set_status", help="Set a new status for a task by id")
     task_set_status.add_argument("--id", type=int, required=True, help="Task id")
     task_set_status.add_argument("--status", required=True, choices=["todo", "doing", "done"], help="New task status")
+
+    # task find
+    task_find = task_subparsers.add_parser("find", help="Find a task by id or name")
+    task_find_group = task_find.add_mutually_exclusive_group(required=True)
+    task_find_group.add_argument("--id", type=int, help="Task id")
+    task_find_group.add_argument("--name", type=str, help="Task name")
 
     # Add a top-level command for listing all projects with their tasks
     list_all_parser = subparsers.add_parser("list_all", help="List all projects and their tasks")
@@ -138,6 +150,22 @@ def main():
                 print("Project description updated successfully.")
             except Exception as e:
                 print(f"Error: {e}")
+        elif args.action == "find":
+            if args.id is not None and args.name is not None:
+                print("Error: Only one of --id or --name should be provided.")
+                return
+            try:
+                project = None
+                if args.id is not None:
+                    project = project_service.get_project_by_id(args.id)
+                elif args.name is not None:
+                    project = project_service.get_project_by_name(args.name)
+                if project:
+                    project_service.print_project(project)
+                else:
+                    print("Project not found.")
+            except Exception as e:
+                print(f"Error: {e}")
     elif args.entity == "task":
         if args.action == "create":
             due_date = None
@@ -187,6 +215,28 @@ def main():
                 status = TaskStatus(args.status)
                 task_service.set_task_status_by_id(args.id, status)
                 print("Task status updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "find":
+            if args.id is not None and args.name is not None:
+                print("Error: Only one of --id or --name should be provided.")
+                return
+            try:
+                task = None
+                if args.id is not None:
+                    task = task_service.get_task_by_id(args.id)
+                elif args.name is not None:
+                    tasks = task_service.get_tasks_by_name(args.name)
+                    if not tasks:
+                        print("Task not found.")
+                        return
+                    for task in tasks:
+                        task_service.print_task(task)
+                    return
+                if task:
+                    task_service.print_task(task)
+                else:
+                    print("Task not found.")
             except Exception as e:
                 print(f"Error: {e}")
 
