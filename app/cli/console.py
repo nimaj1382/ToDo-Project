@@ -1,5 +1,6 @@
 import argparse
 from datetime import datetime
+from app.commands.autoclose_overdue import autoclose_overdue_tasks
 from app.services import *
 from app.db.session import SessionLocal
 from app.repositories.project_repository import ProjectRepository
@@ -286,6 +287,12 @@ def main():
                     closed_at = datetime.strptime(args.closed_at, "%Y-%m-%d")
                 task_service.set_task_closed_at_by_id(args.id, closed_at)
                 print("Task closed_at updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "autoclose_overdue":
+            try:
+                autoclose_overdue_tasks()
+                print("Overdue tasks closed successfully.")
             except Exception as e:
                 print(f"Error: {e}")
 
