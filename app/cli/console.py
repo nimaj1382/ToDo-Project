@@ -53,6 +53,12 @@ def main():
     project_find_group.add_argument("--id", type=int, help="Project id")
     project_find_group.add_argument("--name", type=str, help="Project name")
 
+    # project list_tasks
+    project_list_tasks = project_subparsers.add_parser("list_tasks", help="List all tasks for a project by id or name")
+    project_list_tasks_group = project_list_tasks.add_mutually_exclusive_group(required=True)
+    project_list_tasks_group.add_argument("--id", type=int, help="Project id")
+    project_list_tasks_group.add_argument("--name", type=str, help="Project name")
+
     # Task commands
     task_parser = subparsers.add_parser("task", help="Task operations")
     task_subparsers = task_parser.add_subparsers(dest="action", required=True)
@@ -169,6 +175,23 @@ def main():
                     project_service.print_project(project)
                 else:
                     print("Project not found.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "list_tasks":
+            if args.id is not None and args.name is not None:
+                print("Error: Only one of --id or --name should be provided.")
+                return
+            try:
+                tasks = []
+                if args.id is not None:
+                    tasks = project_service.project_tasks_list_by_id(args.id)
+                elif args.name is not None:
+                    tasks = project_service.project_tasks_list_by_name(args.name)
+                if not tasks:
+                    print("No tasks found for the specified project.")
+                    return
+                for task in tasks:
+                    task_service.print_task(task)
             except Exception as e:
                 print(f"Error: {e}")
     elif args.entity == "task":
