@@ -108,6 +108,11 @@ def main():
     task_set_project_id.add_argument("--id", type=int, required=True, help="Task id")
     task_set_project_id.add_argument("--project_id", type=int, required=True, help="New project id for the task")
 
+    # task set closed_at
+    task_set_closed_at = task_subparsers.add_parser("set_closed_at", help="Set closed_at datetime for a task by id")
+    task_set_closed_at.add_argument("--id", type=int, required=True, help="Task id")
+    task_set_closed_at.add_argument("--closed_at", required=True, help="Closed at datetime (YYYY-MM-DD HH:MM:SS)")
+
     # Add a top-level command for listing all projects with their tasks
     list_all_parser = subparsers.add_parser("list_all", help="List all projects and their tasks")
 
@@ -271,6 +276,16 @@ def main():
                     task_service.print_task(task)
                 else:
                     print("Task not found.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_closed_at":
+            try:
+                closed_at = None
+                if args.closed_at:
+                    from datetime import datetime
+                    closed_at = datetime.strptime(args.closed_at, "%Y-%m-%d %H:%M:%S")
+                task_service.set_task_closed_at_by_id(args.id, closed_at)
+                print("Task closed_at updated successfully.")
             except Exception as e:
                 print(f"Error: {e}")
 

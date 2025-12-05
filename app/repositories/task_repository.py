@@ -44,5 +44,9 @@ class TaskRepository:
         task.project_id = task_project_id
         self.session.commit()
 
+    def set_task_closed_at(self, task: Task, closed_at: datetime) -> None:
+        task.closed_at = closed_at
+        self.session.commit()
+
     def all_tasks(self) -> list[Type[Task]]:
         return list(self.session.query(Task))

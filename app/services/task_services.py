@@ -143,6 +143,17 @@ class TaskService:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_project_id(task, task_project_id, project_service)
 
+    def set_task_closed_at(self, task: Task, closed_at: datetime) -> None:
+        if not isinstance(closed_at, datetime):
+            raise ValueError("closed_at must be an instance of datetime.")
+        self.repository.set_task_closed_at(task, closed_at)
+
+    def set_task_closed_at_by_id(self, task_id: int, closed_at: datetime) -> None:
+        task = self.get_task_by_id(task_id)
+        if task is None:
+            raise ExistanceError("task with given id does not exist.")
+        self.set_task_closed_at(task, closed_at)
+
     def all_tasks(self) -> List[Type[Task]]:
         return self.repository.all_tasks()
 
