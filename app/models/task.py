@@ -14,7 +14,7 @@ class TaskStatus(enum.Enum):
             return "todo"
         if self == self.DOING:
             return "doing"
-        if self == self.Done:
+        if self == self.DONE:
             return "done"
 
 class Task(Base):
