@@ -97,6 +97,11 @@ def main():
     task_find_group.add_argument("--id", type=int, help="Task id")
     task_find_group.add_argument("--name", type=str, help="Task name")
 
+    # task set project id
+    task_set_project_id = task_subparsers.add_parser("set_project_id", help="Set a new project id for a task by id")
+    task_set_project_id.add_argument("--id", type=int, required=True, help="Task id")
+    task_set_project_id.add_argument("--project_id", type=int, required=True, help="New project id for the task")
+
     # Add a top-level command for listing all projects with their tasks
     list_all_parser = subparsers.add_parser("list_all", help="List all projects and their tasks")
 
@@ -215,6 +220,12 @@ def main():
                 status = TaskStatus(args.status)
                 task_service.set_task_status_by_id(args.id, status)
                 print("Task status updated successfully.")
+            except Exception as e:
+                print(f"Error: {e}")
+        elif args.action == "set_project_id":
+            try:
+                task_service.set_task_project_id_by_id(args.id, args.project_id, project_service)
+                print("Task project id updated successfully.")
             except Exception as e:
                 print(f"Error: {e}")
         elif args.action == "find":
