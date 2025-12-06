@@ -1,6 +1,7 @@
 import schedule
-import time
 from datetime import datetime
+
+from app.services.task_services import TaskService
 from app.models.task import TaskStatus
 
 """Utilities for automatically closing overdue tasks.
