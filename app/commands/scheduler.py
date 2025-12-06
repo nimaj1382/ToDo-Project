@@ -8,7 +8,10 @@ class Scheduler:
     Periodically runs a given function in a background thread.
     """
 
-    def __init__(self, interval: int, task: Callable, args: Optional[tuple] = None, kwargs: Optional[dict] = None) -> None:
+    def __init__(self, interval: int,
+                 task: Callable,
+                 args: Optional[tuple] = None,
+                 kwargs: Optional[dict] = None) -> None:
         """
         Args:
             interval (int): Interval in seconds between task executions.
