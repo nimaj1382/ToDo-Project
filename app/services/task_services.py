@@ -124,7 +124,8 @@ class TaskService:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_due_date(task, task_due_date)
 
-    def set_task_project_id(self, task: Task, task_project_id: int, project_service: 'ProjectService') -> None:
+    def set_task_project_id(self, task: Task, task_project_id: int,
+                            project_service: 'ProjectService') -> None:
         project = project_service.get_project_by_id(task_project_id)
         if project is None:
             raise ExistanceError("project with given id does not exist.")
@@ -137,7 +138,8 @@ class TaskService:
                                       "name for the given project is already in use.")
         self.repository.set_task_project_id(task, task_project_id)
 
-    def set_task_project_id_by_id(self, task_id: int, task_project_id: int, project_service: 'ProjectService') -> None:
+    def set_task_project_id_by_id(self, task_id: int, task_project_id: int,
+                                  project_service: 'ProjectService') -> None:
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
@@ -165,7 +167,14 @@ class TaskService:
         max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
         max_closed_at_length = int(os.getenv("MAX_SHOW_CLOSED_AT_LENGTH", 10))
         tab_indent = '\t' * indent
-        print(f"{tab_indent}{'task id':^15} \t|{'task name':^{max_name_length}} \t|{'task description':^{max_description_length}} \t|{'task status':^10} \t|{'task due date':^{max_due_date_length}} \t|{'task closed at':^{max_closed_at_length}} \t|{'task project id':^15}")
+        print(f"{tab_indent}"
+              f"{'task id':^15} \t"
+              f"|{'task name':^{max_name_length}} \t"
+              f"|{'task description':^{max_description_length}} \t"
+              f"|{'task status':^10} \t"
+              f"|{'task due date':^{max_due_date_length}} \t"
+              f"|{'task closed at':^{max_closed_at_length}} \t"
+              f"|{'task project id':^15}")
         print()
         for task in all_tasks:
             self.print_task(task, indent)
@@ -178,9 +187,24 @@ class TaskService:
         max_closed_at_length = int(os.getenv("MAX_SHOW_CLOSED_AT_LENGTH", 10))
         tab_indent = '\t' * indent
 
-        display_name = str(task.name)[:max_name_length] + textwrap.shorten(str(task.name)[max_name_length + 1:], width=3, placeholder="...")
-        display_description = str(task.description)[:max_description_length] + textwrap.shorten(str(task.description)[max_description_length + 1:], width=3, placeholder="...")
-        display_due_date = str(task.due_date)[:max_due_date_length] + textwrap.shorten(str(task.due_date)[max_due_date_length + 1:], width=3, placeholder="...")
-        display_closed_at = str(task.closed_at)[:max_closed_at_length] + textwrap.shorten(str(task.closed_at)[max_closed_at_length + 1:], width=3, placeholder="...")
+        display_name = (str(task.name)[:max_name_length] +
+                        textwrap.shorten(str(task.name)[max_name_length + 1:],
+                                         width=3, placeholder="..."))
+        display_description = (str(task.description)[:max_description_length] +
+                               textwrap.shorten(str(task.description)[max_description_length + 1:],
+                                                width=3, placeholder="..."))
+        display_due_date = (str(task.due_date)[:max_due_date_length] +
+                            textwrap.shorten(str(task.due_date)[max_due_date_length + 1:],
+                                             width=3, placeholder="..."))
+        display_closed_at = (str(task.closed_at)[:max_closed_at_length] +
+                             textwrap.shorten(str(task.closed_at)[max_closed_at_length + 1:],
+                                              width=3, placeholder="..."))
         display_closed_at = str(task.closed_at) if task.closed_at else ""
-        print(f"{tab_indent}{task.id:<15} \t|{display_name:<{max_name_length}} \t|{display_description:<{max_description_length}} \t|{task.status:<10} \t|{display_due_date:<{max_due_date_length}} \t|{display_closed_at:<{max_closed_at_length}} \t|{task.project_id:<15}")
+        print(f"{tab_indent}"
+              f"{task.id:<15} \t"
+              f"|{display_name:<{max_name_length}} \t"
+              f"|{display_description:<{max_description_length}} \t"
+              f"|{task.status:<10} \t"
+              f"|{display_due_date:<{max_due_date_length}} \t"
+              f"|{display_closed_at:<{max_closed_at_length}} \t"
+              f"|{task.project_id:<15}")
