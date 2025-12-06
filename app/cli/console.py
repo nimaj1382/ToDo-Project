@@ -28,133 +28,138 @@ project_service = ProjectService(project_repo)
 task_service = TaskService(task_repo)
 
 def main():
-    parser = argparse.ArgumentParser(description="ToDo List CLI")
-    subparsers = parser.add_subparsers(dest="entity", required=True)
+    parser = argparse.ArgumentParser(description = "ToDo List CLI")
+    subparsers = parser.add_subparsers(dest = "entity", required = True)
 
     # Project commands
-    project_parser = subparsers.add_parser("project", help="Project operations")
-    project_subparsers = project_parser.add_subparsers(dest="action", required=True)
+    project_parser = subparsers.add_parser("project", help = "Project operations")
+    project_subparsers = project_parser.add_subparsers(dest = "action", required = True)
 
     # project create
-    project_create = project_subparsers.add_parser("create", help="Create a new project")
-    project_create.add_argument("--name", required=True, help="Project name")
-    project_create.add_argument("--description", default="",
-                                help="Project description")
+    project_create = project_subparsers.add_parser("create", help = "Create a new project")
+    project_create.add_argument("--name", required = True, help = "Project name")
+    project_create.add_argument("--description", default = "",
+                                help = "Project description")
 
     # project list
-    project_list = project_subparsers.add_parser("list", help="List all projects")
+    project_list = project_subparsers.add_parser("list", help = "List all projects")
 
     # project delete (by id or name)
     project_delete = project_subparsers.add_parser("delete",
-                                help="Delete a project by id or name")
+                                help = "Delete a project by id or name")
     # Using a mutually exclusive group forces the user to choose either --id or --name,
     # preventing ambiguous inputs and simplifying downstream logic.
-    project_delete_group = project_delete.add_mutually_exclusive_group(required=True)
-    project_delete_group.add_argument("--id", type=int, help="Project id")
-    project_delete_group.add_argument("--name", type=str, help="Project name")
+    project_delete_group = project_delete.add_mutually_exclusive_group(required = True)
+    project_delete_group.add_argument("--id", type = int, help = "Project id")
+    project_delete_group.add_argument("--name", type = str, help = "Project name")
 
     # project set name
     project_set_name = project_subparsers.add_parser("set_name",
-                                help="Set a new name for a project by id or name")
-    project_set_name_group = project_set_name.add_mutually_exclusive_group(required=True)
-    project_set_name_group.add_argument("--id", type=int, help="Project id")
-    project_set_name_group.add_argument("--name", type=str, help="Project name")
-    project_set_name.add_argument("--new_name", required=True, help="New project name")
+                                help = "Set a new name for a project by id or name")
+    project_set_name_group = project_set_name.add_mutually_exclusive_group(required = True)
+    project_set_name_group.add_argument("--id", type = int, help = "Project id")
+    project_set_name_group.add_argument("--name", type = str, help = "Project name")
+    project_set_name.add_argument("--new_name", required = True, 
+                                  help = "New project name")
 
     # project set description
     project_set_desc = project_subparsers.add_parser("set_description",
-                                help="Set a new description for a project by id or name")
-    project_set_desc_group = project_set_desc.add_mutually_exclusive_group(required=True)
-    project_set_desc_group.add_argument("--id", type=int, help="Project id")
-    project_set_desc_group.add_argument("--name", type=str, help="Project name")
+                                help = "Set a new description for a project by id or name")
+    project_set_desc_group = project_set_desc.add_mutually_exclusive_group(required = True)
+    project_set_desc_group.add_argument("--id", type = int, help = "Project id")
+    project_set_desc_group.add_argument("--name", type = str, help = "Project name")
     project_set_desc.add_argument("--new_description",
-                                required=True, help="New project description")
+                                required = True, help = "New project description")
 
     # project find
-    project_find = project_subparsers.add_parser("find", help="Find a project by id or name")
-    project_find_group = project_find.add_mutually_exclusive_group(required=True)
-    project_find_group.add_argument("--id", type=int, help="Project id")
-    project_find_group.add_argument("--name", type=str, help="Project name")
+    project_find = project_subparsers.add_parser("find", 
+                                help = "Find a project by id or name")
+    project_find_group = project_find.add_mutually_exclusive_group(required = True)
+    project_find_group.add_argument("--id", type = int, help = "Project id")
+    project_find_group.add_argument("--name", type = str, help = "Project name")
 
     # project list_tasks
     project_list_tasks = project_subparsers.add_parser("list_tasks",
-                                help="List all tasks for a project by id or name")
-    project_list_tasks_group = project_list_tasks.add_mutually_exclusive_group(required=True)
-    project_list_tasks_group.add_argument("--id", type=int, help="Project id")
-    project_list_tasks_group.add_argument("--name", type=str, help="Project name")
+                                help = "List all tasks for a project by id or name")
+    project_list_tasks_group = project_list_tasks.add_mutually_exclusive_group(required = True)
+    project_list_tasks_group.add_argument("--id", type = int, help = "Project id")
+    project_list_tasks_group.add_argument("--name", type = str, help = "Project name")
 
     # Task commands
-    task_parser = subparsers.add_parser("task", help="Task operations")
-    task_subparsers = task_parser.add_subparsers(dest="action", required=True)
+    task_parser = subparsers.add_parser("task", help = "Task operations")
+    task_subparsers = task_parser.add_subparsers(dest = "action", required = True)
 
     # task create
-    task_create = task_subparsers.add_parser("create", help="Create a new task")
-    task_create.add_argument("--project_id", type=int, required=True,
-                             help="Project ID for the task")
-    task_create.add_argument("--name", required=True, help="Task name")
-    task_create.add_argument("--description", default="", help="Task description")
-    task_create.add_argument("--due_date", default=None,
-                             help="Task due date (YYYY-MM-DD)")
+    task_create = task_subparsers.add_parser("create", help = "Create a new task")
+    task_create.add_argument("--project_id", type = int, required = True,
+                             help = "Project ID for the task")
+    task_create.add_argument("--name", required = True, help = "Task name")
+    task_create.add_argument("--description", default = "", help = "Task description")
+    task_create.add_argument("--due_date", default = None,
+                             help = "Task due date (YYYY-MM-DD)")
 
     # task list
-    task_list = task_subparsers.add_parser("list", help="List all tasks")
+    task_list = task_subparsers.add_parser("list", help = "List all tasks")
 
     # task delete (by id)
-    task_delete = task_subparsers.add_parser("delete", help="Delete a task by id")
-    task_delete.add_argument("--id", type=int, required=True, help="Task id")
+    task_delete = task_subparsers.add_parser("delete", help = "Delete a task by id")
+    task_delete.add_argument("--id", type = int, required = True, help = "Task id")
 
     # task set name
     task_set_name = task_subparsers.add_parser("set_name",
-                            help="Set a new name for a task by id")
-    task_set_name.add_argument("--id", type=int, required=True, help="Task id")
-    task_set_name.add_argument("--new_name", required=True, help="New task name")
+                            help = "Set a new name for a task by id")
+    task_set_name.add_argument("--id", type = int, required = True, help = "Task id")
+    task_set_name.add_argument("--new_name", required = True, help = "New task name")
 
     # task set description
     task_set_desc = task_subparsers.add_parser("set_description",
-                            help="Set a new description for a task by id")
-    task_set_desc.add_argument("--id", type=int, required=True, help="Task id")
-    task_set_desc.add_argument("--new_description", required=True,
-                            help="New task description")
+                            help = "Set a new description for a task by id")
+    task_set_desc.add_argument("--id", type = int, required = True, help = "Task id")
+    task_set_desc.add_argument("--new_description", required = True,
+                            help = "New task description")
 
     # task set due date
     task_set_due_date = task_subparsers.add_parser("set_due_date",
-                            help="Set a new due date for a task by id")
-    task_set_due_date.add_argument("--id", type=int, required=True, help="Task id")
-    task_set_due_date.add_argument("--due_date", required=True,
-                            help="New due date (YYYY-MM-DD)")
+                            help = "Set a new due date for a task by id")
+    task_set_due_date.add_argument("--id", type = int, required = True, 
+                                   help = "Task id")
+    task_set_due_date.add_argument("--due_date", required = True,
+                            help = "New due date (YYYY-MM-DD)")
 
     # task set status
     task_set_status = task_subparsers.add_parser("set_status",
-                            help="Set a new status for a task by id")
-    task_set_status.add_argument("--id", type=int, required=True, help="Task id")
-    task_set_status.add_argument("--status", required=True,
-                            choices=["todo", "doing", "done"], help="New task status")
+                            help = "Set a new status for a task by id")
+    task_set_status.add_argument("--id", type = int, required = True, help = "Task id")
+    task_set_status.add_argument("--status", required = True,
+                            choices = ["todo", "doing", "done"], help = "New task status")
 
     # task find
-    task_find = task_subparsers.add_parser("find", help="Find a task by id or name")
-    task_find_group = task_find.add_mutually_exclusive_group(required=True)
-    task_find_group.add_argument("--id", type=int, help="Task id")
-    task_find_group.add_argument("--name", type=str, help="Task name")
+    task_find = task_subparsers.add_parser("find", help = "Find a task by id or name")
+    task_find_group = task_find.add_mutually_exclusive_group(required = True)
+    task_find_group.add_argument("--id", type = int, help = "Task id")
+    task_find_group.add_argument("--name", type = str, help = "Task name")
 
     # task set project id
     task_set_project_id = task_subparsers.add_parser("set_project_id",
-                            help="Set a new project id for a task by id")
-    task_set_project_id.add_argument("--id", type=int, required=True, help="Task id")
-    task_set_project_id.add_argument("--project_id", type=int, required=True,
-                            help="New project id for the task")
+                            help = "Set a new project id for a task by id")
+    task_set_project_id.add_argument("--id", type = int, required = True, 
+                                     help = "Task id")
+    task_set_project_id.add_argument("--project_id", type = int, required = True,
+                            help = "New project id for the task")
 
     # task set closed_at
     task_set_closed_at = task_subparsers.add_parser("set_closed_at",
-                            help="Set closed_at datetime for a task by id")
-    task_set_closed_at.add_argument("--id", type=int, required=True, help="Task id")
+                            help = "Set closed_at datetime for a task by id")
+    task_set_closed_at.add_argument("--id", type = int, required = True, 
+                                    help = "Task id")
     # Note: help suggests time component, but parsing below uses YYYY-MM-DD.
     # Keeping as-is to avoid logic changes; parsing comment clarifies behavior.
-    task_set_closed_at.add_argument("--closed_at", required=True,
-                            help="Closed at datetime (YYYY-MM-DD HH:MM:SS)")
+    task_set_closed_at.add_argument("--closed_at", required = True,
+                            help = "Closed at datetime (YYYY-MM-DD HH:MM:SS)")
 
     # Add a top-level command for listing all projects with their tasks
     list_all_parser = subparsers.add_parser("list_all",
-                            help="List all projects and their tasks")
+                            help = "List all projects and their tasks")
 
     args = parser.parse_args()
 
@@ -167,8 +172,8 @@ def main():
     if args.entity == "project":
         if args.action == "create":
             try:
-                project_service.create_project(project_name=args.name,
-                                               project_description=args.description)
+                project_service.create_project(project_name = args.name,
+                                               project_description = args.description)
                 print("Project created successfully.")
             except Exception as e:
                 print(f"Error: {e}")
@@ -255,11 +260,11 @@ def main():
                 except ValueError:
                     print("Invalid date format. Skipping due date.")
             try:
-                task_service.create_task(task_name=args.name,
-                                         task_description=args.description,
-                                         task_project_id=args.project_id,
-                                         task_due_date=due_date,
-                                         project_service=project_service)
+                task_service.create_task(task_name = args.name,
+                                         task_description = args.description,
+                                         task_project_id = args.project_id,
+                                         task_due_date = due_date,
+                                         project_service = project_service)
                 print("Task created successfully.")
             except Exception as e:
                 print(f"Error: {e}")
@@ -350,3 +355,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
