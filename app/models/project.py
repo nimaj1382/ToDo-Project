@@ -13,8 +13,8 @@ class Project(Base):
     """
     __tablename__ = "projects"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(30), unique=True, nullable=False, index=True)
-    description = Column(String(150), index=True)
+    id = Column(Integer, primary_key = True, index = True)
+    name = Column(String(30), unique = True, nullable = False, index = True)
+    description = Column(String(150), index = True)
     # Bidirectional relationship with Task; Task.project refers back here
-    tasks = relationship("Task", back_populates="project")
+    tasks = relationship("Task", back_populates = "project")
