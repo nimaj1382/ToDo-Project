@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.api.v1.dependencies.services import get_db, get_project_service, get_task_service
-from app.api.v1.schemas.requests.task import TaskCreate, TaskUpdate
-from app.api.v1.schemas.responses.task import TaskResponse
+from app.api.v1.schemas.requests import TaskCreate, TaskUpdate
+from app.api.v1.schemas.responses import TaskResponse
 from app.services.project_services import ProjectService
 from app.services.task_services import TaskService
 from app.models.task import TaskStatus
