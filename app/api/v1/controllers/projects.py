@@ -9,16 +9,16 @@ from app.services.project_services import ProjectService
 from app.services.task_services import TaskService
 from app.exceptions.service_exceptions import *
 router = APIRouter(
-    prefix="/projects",
-    tags=["projects"],
+    prefix = "/projects",
+    tags = ["projects"],
 )
 
 
 @router.get(
     "/",
-    response_model=List[ProjectResponse],
-    summary="List all projects",
-    description="Retrieve a list of all projects in the system."
+    response_model = List[ProjectResponse],
+    summary = "List all projects",
+    description = "Retrieve a list of all projects in the system."
 )
 async def list_projects(
         db: Session = Depends(get_db)
@@ -35,10 +35,10 @@ async def list_projects(
 
 @router.post(
     "/",
-    response_model=ProjectResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Create a new project",
-    description="Create a new project with a unique name and optional description."
+    response_model = ProjectResponse,
+    status_code = status.HTTP_201_CREATED,
+    summary = "Create a new project",
+    description = "Create a new project with a unique name and optional description."
 )
 async def create_project(
         project: ProjectCreate,
@@ -60,27 +60,27 @@ async def create_project(
 
     try:
         created_project = project_service.create_project(
-            project_name=project.name,
-            project_description=project.description
+            project_name = project.name,
+            project_description = project.description
         )
         return ProjectResponse.model_validate(created_project)
     except UniquenessError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
     except MaxLengthExceededError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
 
 
 @router.get(
     "/{project_id}",
-    response_model=ProjectResponse,
-    summary="Get a project by ID",
-    description="Retrieve a specific project by its ID."
+    response_model = ProjectResponse,
+    summary = "Get a project by ID",
+    description = "Retrieve a specific project by its ID."
 )
 async def get_project(
         project_id: int,
@@ -103,8 +103,8 @@ async def get_project(
 
     if project is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Project with id {project_id} not found"
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f"Project with id {project_id} not found"
         )
 
     return ProjectResponse.model_validate(project)
@@ -112,9 +112,9 @@ async def get_project(
 
 @router.put(
     "/{project_id}",
-    response_model=ProjectResponse,
-    summary="Update a project",
-    description="Update a project's name and/or description."
+    response_model = ProjectResponse,
+    summary = "Update a project",
+    description = "Update a project's name and/or description."
 )
 async def update_project(
         project_id: int,
@@ -143,8 +143,8 @@ async def update_project(
         project = project_service.get_project_by_id(project_id)
         if project is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Project with id {project_id} not found"
+                status_code = status.HTTP_404_NOT_FOUND,
+                detail = f"Project with id {project_id} not found"
             )
 
         # Update name if provided
@@ -161,26 +161,26 @@ async def update_project(
 
     except ExistanceError as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
         )
     except UniquenessError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
     except MaxLengthExceededError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
 
 
 @router.delete(
     "/{project_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-    summary="Delete a project",
-    description="Delete a project and all its associated tasks."
+    status_code = status.HTTP_204_NO_CONTENT,
+    summary = "Delete a project",
+    description = "Delete a project and all its associated tasks."
 )
 async def delete_project(
         project_id: int,
@@ -202,16 +202,16 @@ async def delete_project(
         project_service.delete_project_by_id(project_id, task_service)
     except ExistanceError as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
         )
 
 
 @router.get(
     "/{project_id}/tasks",
-    response_model=List[TaskResponse],
-    summary="List tasks for a project",
-    description="Retrieve all tasks associated with a specific project."
+    response_model = List[TaskResponse],
+    summary = "List tasks for a project",
+    description = "Retrieve all tasks associated with a specific project."
 )
 async def list_project_tasks(
         project_id: int,
@@ -236,6 +236,6 @@ async def list_project_tasks(
         return [TaskResponse.model_validate(task) for task in tasks]
     except ExistanceError as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
         )
