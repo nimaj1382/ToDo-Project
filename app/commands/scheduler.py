@@ -1,6 +1,7 @@
 import threading
 import time
 from typing import Callable, Optional
+
 from autoclose_overdue import autoclose_overdue_tasks
 
 class Scheduler:
