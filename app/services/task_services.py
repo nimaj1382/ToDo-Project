@@ -10,7 +10,7 @@ from app.services.project_services import ProjectService
 
 
 class TaskService:
-    """Business logic for task-related operations.
+    """Service layer for task-related operations.
 
     Provides methods to create, retrieve, update, delete, and display tasks.
     Interacts with TaskRepository and validates business rules.
@@ -164,7 +164,7 @@ class TaskService:
             task (Task): The task to update.
             new_task_description (str): The new description for the task.
         """
-        self.repository.set_task_name(task, new_task_description)
+        self.repository.set_task_description(task, new_task_description)
 
     def set_task_description_by_id(self, task_id: int, new_task_description: str) -> None:
         """Update a task's description by task ID.
@@ -347,6 +347,10 @@ class TaskService:
         max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
         max_closed_at_length = int(os.getenv("MAX_SHOW_CLOSED_AT_LENGTH", 10))
         tab_indent = '\t' * indent
+        # Build fixed-width display strings,
+        # truncating and shortening where needed to keep table alignment.
+        # First slice ensures hard limit,
+        # textwrap.shorten adds an ellipsis for overflow when appropriate.
         display_name = (str(task.name)[:max_name_length] +
                         textwrap.shorten(str(task.name)[max_name_length + 1:],
                                          width=3, placeholder="..."))
