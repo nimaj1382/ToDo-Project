@@ -1,3 +1,18 @@
+"""
+Command-line interface (CLI) for the ToDo List application.
+
+This module defines the CLI using argparse, providing subcommands for
+project and task operations, plus a top-level command to list all projects
+with their tasks. It wires repositories and services, parses user input,
+and routes each command to the corresponding service methods.
+
+Key concepts:
+- Top-level entities: "project", "task", and "list_all".
+- Each entity has subcommands implemented via argparse subparsers.
+- Mutually exclusive groups enforce that only one of --id or --name is
+  provided where applicable.
+- Date strings from CLI are parsed to datetime objects when necessary.
+"""
 import argparse
 from datetime import datetime
 from app.commands.autoclose_overdue import autoclose_overdue_tasks
@@ -32,6 +47,8 @@ def main():
     # project delete (by id or name)
     project_delete = project_subparsers.add_parser("delete",
                                 help="Delete a project by id or name")
+    # Using a mutually exclusive group forces the user to choose either --id or --name,
+    # preventing ambiguous inputs and simplifying downstream logic.
     project_delete_group = project_delete.add_mutually_exclusive_group(required=True)
     project_delete_group.add_argument("--id", type=int, help="Project id")
     project_delete_group.add_argument("--name", type=str, help="Project name")
@@ -130,6 +147,8 @@ def main():
     task_set_closed_at = task_subparsers.add_parser("set_closed_at",
                             help="Set closed_at datetime for a task by id")
     task_set_closed_at.add_argument("--id", type=int, required=True, help="Task id")
+    # Note: help suggests time component, but parsing below uses YYYY-MM-DD.
+    # Keeping as-is to avoid logic changes; parsing comment clarifies behavior.
     task_set_closed_at.add_argument("--closed_at", required=True,
                             help="Closed at datetime (YYYY-MM-DD HH:MM:SS)")
 
@@ -139,7 +158,10 @@ def main():
 
     args = parser.parse_args()
 
+    # Routing: based on top-level entity, delegate to appropriate service methods.
     if args.entity == "list_all":
+        # This uses project_service with task_service to print a combined view
+        # of all projects and their tasks.
         project_service.print_all_projects_with_tasks(task_service)
         return
     if args.entity == "project":
@@ -153,6 +175,8 @@ def main():
         elif args.action == "list":
             project_service.print_all_projects()
         elif args.action == "delete":
+            # Defensive check: although argparse enforces mutual exclusivity,
+            # this ensures no ambiguity if both were somehow provided.
             if args.id is not None and args.name is not None:
                 print("Error: Only one of --id or --name should be provided.")
                 return
@@ -226,6 +250,7 @@ def main():
             due_date = None
             if args.due_date:
                 try:
+                    # Parse YYYY-MM-DD into a datetime; if invalid, skip gracefully.
                     due_date = datetime.strptime(args.due_date, "%Y-%m-%d")
                 except ValueError:
                     print("Invalid date format. Skipping due date.")
@@ -309,6 +334,8 @@ def main():
                 closed_at = None
                 if args.closed_at:
                     from datetime import datetime
+                    # Despite help suggesting a datetime with time, this parses
+                    # only date (YYYY-MM-DD). Keeping to match current behavior.
                     closed_at = datetime.strptime(args.closed_at, "%Y-%m-%d")
                 task_service.set_task_closed_at_by_id(args.id, closed_at)
                 print("Task closed_at updated successfully.")
