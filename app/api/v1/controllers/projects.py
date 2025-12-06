@@ -110,6 +110,40 @@ async def get_project(
     return ProjectResponse.model_validate(project)
 
 
+@router.get(
+    "/name/{project_name}",
+    response_model = ProjectResponse,
+    summary = "Get a project by name",
+    description = "Retrieve a specific project by its name."
+)
+async def get_project_by_name(
+        project_name: str,
+        db: Session = Depends(get_db)
+) -> ProjectResponse:
+    """Get a project by name.
+
+    Args:
+        project_name: The project name
+        db: Database session
+
+    Returns:
+        The project with the specified name.
+
+    Raises:
+        HTTPException: 404 if project not found
+    """
+    project_service = get_project_service(db)
+    project = project_service.get_project_by_name(project_name)
+
+    if project is None:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f"Project with name '{project_name}' not found"
+        )
+
+    return ProjectResponse.model_validate(project)
+
+
 @router.put(
     "/{project_id}",
     response_model = ProjectResponse,
@@ -233,6 +267,40 @@ async def list_project_tasks(
 
     try:
         tasks = project_service.project_tasks_list_by_id(project_id)
+        return [TaskResponse.model_validate(task) for task in tasks]
+    except ExistanceError as e:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
+        )
+
+
+@router.get(
+    "/name/{project_name}/tasks",
+    response_model = List[TaskResponse],
+    summary = "List tasks for a project by name",
+    description = "Retrieve all tasks associated with a specific project by its name."
+)
+async def list_project_tasks_by_name(
+        project_name: str,
+        db: Session = Depends(get_db)
+) -> List[TaskResponse]:
+    """List all tasks for a project by name.
+
+    Args:
+        project_name: The project name
+        db: Database session
+
+    Returns:
+        List of tasks belonging to the project.
+
+    Raises:
+        HTTPException: 404 if project not found
+    """
+    project_service = get_project_service(db)
+
+    try:
+        tasks = project_service.project_tasks_list_by_name(project_name)
         return [TaskResponse.model_validate(task) for task in tasks]
     except ExistanceError as e:
         raise HTTPException(
