@@ -1,7 +1,9 @@
 from sqlalchemy import (Column, Integer, String, ForeignKey, Enum,
                         DateTime, UniqueConstraint)
 from sqlalchemy.orm import relationship
+
 from app.db.base import Base
+
 import enum
 
 class TaskStatus(enum.Enum):
