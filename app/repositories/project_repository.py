@@ -1,6 +1,7 @@
 from typing import Optional, List, Type
 
 from sqlalchemy.orm import Session
+
 from app.models.project import Project
 
 class ProjectRepository:
