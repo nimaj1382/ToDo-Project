@@ -29,7 +29,7 @@ class Scheduler:
         self.kwargs = kwargs if kwargs else {}
         self._stop_event = threading.Event()
         # Daemon thread so the program can exit without waiting for this thread.
-        self._thread = threading.Thread(target=self._run, daemon=True)
+        self._thread = threading.Thread(target = self._run, daemon = True)
 
     def _run(self) -> None:
         """Worker loop that executes the task, then sleeps for the interval."""
@@ -53,5 +53,5 @@ class Scheduler:
 
 # WARNING: Creating and starting a scheduler at import-time introduces a side effect.
 # Importing this module will immediately start the background task runner.
-scheduler = Scheduler(interval=3600, task=autoclose_overdue_tasks)  # Run every hour
+scheduler = Scheduler(interval = 3600, task = autoclose_overdue_tasks)  # Run every hour
 scheduler.start()
