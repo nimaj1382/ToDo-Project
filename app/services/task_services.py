@@ -10,7 +10,17 @@ from app.services.project_services import ProjectService
 
 
 class TaskService:
+    """Business logic for task-related operations.
+
+    Provides methods to create, retrieve, update, delete, and display tasks.
+    Interacts with TaskRepository and validates business rules.
+    """
     def __init__(self, repository: TaskRepository):
+        """Initialize TaskService with a TaskRepository.
+
+        Args:
+            repository (TaskRepository): Repository instance to persist and fetch tasks.
+        """
         self.repository = repository
 
     def create_task(self, *, task_name: str,
@@ -19,7 +29,28 @@ class TaskService:
                     task_due_date: datetime = None,
                     task_project_id: int,
                     project_service: 'ProjectService') -> Task:
+        """Create a new task with validations.
 
+        Validates name/description lengths, uniqueness within a project, type checks
+        for status and due date, and verifies that the project exists.
+
+        Args:
+            task_name (str): Name of the task.
+            task_description (str, optional): Description of the task.
+            task_status (TaskStatus): Status of the task. Defaults to TODO.
+            task_due_date (datetime, optional): Due date of the task.
+            task_project_id (int): ID of the project the task belongs to.
+            project_service (ProjectService): Service to validate the project.
+
+        Returns:
+            Task: The created task entity.
+
+        Raises:
+            MaxLengthExceededError: If name or description exceeds allowed length.
+            UniquenessError: If a task with the same name exists in the project.
+            ValueError: If status or due date types are invalid.
+            ExistanceError: If the project does not exist.
+        """
         # Check task name and description length
         if len(task_name) > 30:
             raise MaxLengthExceededError("Task name must be 30 characters or fewer.")
@@ -49,21 +80,59 @@ class TaskService:
         return task
 
     def get_task_by_id(self, task_id: int) -> Task:
+        """Fetch a task by its ID.
+
+        Args:
+            task_id (int): The identifier of the task.
+
+        Returns:
+            Task: The task with the given ID, or None if not found.
+        """
         return self.repository.get_task_by_id(task_id)
 
     def get_tasks_by_name(self, task_name: str) -> list[Type[Task]]:
+        """Fetch all tasks matching the given name.
+
+        Args:
+            task_name (str): The name to search for.
+
+        Returns:
+            list[Task]: List of tasks that have the specified name.
+        """
         return self.repository.get_tasks_by_name(task_name)
 
     def delete_task(self, task: Task) -> None:
+        """Delete a task entity.
+
+        Args:
+            task (Task): The task to delete.
+        """
         self.repository.delete_task(task)
 
     def delete_task_by_id(self, task_id: int) -> None:
+        """Delete a task by ID after ensuring it exists.
+
+        Args:
+            task_id (int): The identifier of the task to delete.
+
+        Raises:
+            ExistanceError: If the task does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.delete_task(task)
 
     def set_task_name(self, task: Task, new_task_name: str) -> None:
+        """Update a task's name, enforcing uniqueness within the project.
+
+        Args:
+            task (Task): The task to update.
+            new_task_name (str): The new name for the task.
+
+        Raises:
+            UniquenessError: If the name already exists within the same project.
+        """
         # Ensure task name is unique within the project
         tasks_with_same_name = self.get_tasks_by_name(new_task_name)
         for task in tasks_with_same_name:
@@ -74,37 +143,91 @@ class TaskService:
         self.repository.set_task_name(task, new_task_name)
 
     def set_task_name_by_id(self, task_id: int, new_task_name: str) -> None:
+        """Update a task's name by task ID.
+
+        Args:
+            task_id (int): The identifier of the task to update.
+            new_task_name (str): The new name for the task.
+
+        Raises:
+            ExistanceError: If the task does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_name(task, new_task_name)
 
     def set_task_description(self, task: Task, new_task_description: str) -> None:
+        """Update a task's description.
+
+        Args:
+            task (Task): The task to update.
+            new_task_description (str): The new description for the task.
+        """
         self.repository.set_task_name(task, new_task_description)
 
     def set_task_description_by_id(self, task_id: int, new_task_description: str) -> None:
+        """Update a task's description by task ID.
+
+        Args:
+            task_id (int): The identifier of the task to update.
+            new_task_description (str): The new description for the task.
+
+        Raises:
+            ExistanceError: If the task does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_description(task, new_task_description)
 
     def set_task_status(self, task: Task, task_status: TaskStatus) -> None:
+        """Update a task's status.
+
+        Args:
+            task (Task): The task to update.
+            task_status (TaskStatus): The new status for the task.
+        """
         if not isinstance(task_status, TaskStatus):
             raise ValueError("task_status must be an instance of TaskStatus.")
         self.repository.set_task_status(task, task_status)
 
     def set_task_status_by_id(self, task_id: int, task_status: TaskStatus) -> None:
+        """Update a task's status by task ID.
+
+        Args:
+            task_id (int): The identifier of the task to update.
+            task_status (TaskStatus): The new status for the task.
+
+        Raises:
+            ExistanceError: If the task does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_status(task, task_status)
 
     def set_task_due_date(self, task: Task, task_due_date: datetime) -> None:
+        """Update a task's due date.
+
+        Args:
+            task (Task): The task to update.
+            task_due_date (datetime): The new due date for the task.
+        """
         if not isinstance(task_due_date, datetime):
             raise ValueError("task_due_date must be an instance of datetime.")
         self.repository.set_task_due_date(task, task_due_date)
 
     def set_task_due_date_by_id(self, task_id: int, task_due_date: datetime) -> None:
+        """Update a task's due date by task ID.
+
+        Args:
+            task_id (int): The identifier of the task to update.
+            task_due_date (datetime): The new due date for the task.
+
+        Raises:
+            ExistanceError: If the task does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
@@ -112,6 +235,17 @@ class TaskService:
 
     def set_task_project_id(self, task: Task, task_project_id: int,
                             project_service: 'ProjectService') -> None:
+        """Update a task's project association.
+
+        Args:
+            task (Task): The task to update.
+            task_project_id (int): The new project ID for the task.
+            project_service (ProjectService): Service to validate the project ID.
+
+        Raises:
+            ExistanceError: If the project does not exist.
+            UniquenessError: If a task with the same name exists in the destination project.
+        """
         project = project_service.get_project_by_id(task_project_id)
         if project is None:
             raise ExistanceError("project with given id does not exist.")
@@ -126,26 +260,61 @@ class TaskService:
 
     def set_task_project_id_by_id(self, task_id: int, task_project_id: int,
                                   project_service: 'ProjectService') -> None:
+        """Update a task's project association by task ID.
+
+        Args:
+            task_id (int): The identifier of the task to update.
+            task_project_id (int): The new project ID for the task.
+            project_service (ProjectService): Service to validate the project ID.
+
+        Raises:
+            ExistanceError: If the task or project does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_project_id(task, task_project_id, project_service)
 
     def set_task_closed_at(self, task: Task, closed_at: datetime) -> None:
+        """Update the closed timestamp of a task.
+
+        Args:
+            task (Task): The task to update.
+            closed_at (datetime): The closed timestamp for the task.
+        """
         if not isinstance(closed_at, datetime):
             raise ValueError("closed_at must be an instance of datetime.")
         self.repository.set_task_closed_at(task, closed_at)
 
     def set_task_closed_at_by_id(self, task_id: int, closed_at: datetime) -> None:
+        """Update the closed timestamp of a task by task ID.
+
+        Args:
+            task_id (int): The identifier of the task to update.
+            closed_at (datetime): The closed timestamp for the task.
+
+        Raises:
+            ExistanceError: If the task does not exist.
+        """
         task = self.get_task_by_id(task_id)
         if task is None:
             raise ExistanceError("task with given id does not exist.")
         self.set_task_closed_at(task, closed_at)
 
     def all_tasks(self) -> List[Type[Task]]:
+        """Retrieve all tasks.
+
+        Returns:
+            List[Task]: A list of all task entities.
+        """
         return self.repository.all_tasks()
 
     def print_all_tasks(self, indent: int = 0) -> None:
+        """Display all tasks in a formatted table.
+
+        Args:
+            indent (int): Indentation level for nested tasks.
+        """
         all_tasks = self.all_tasks()
         load_dotenv()
         max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
@@ -166,6 +335,12 @@ class TaskService:
             self.print_task(task, indent)
 
     def print_task(self, task: Type[Task], indent: int = 0) -> None:
+        """Display a single task's details.
+
+        Args:
+            task (Task): The task to display.
+            indent (int): Indentation level for nested tasks.
+        """
         load_dotenv()
         max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
@@ -184,7 +359,6 @@ class TaskService:
         display_closed_at = (str(task.closed_at)[:max_closed_at_length] +
                              textwrap.shorten(str(task.closed_at)[max_closed_at_length + 1:],
                                               width=3, placeholder="..."))
-        display_closed_at = str(task.closed_at) if task.closed_at else ""
         print(f"{tab_indent}"
               f"{task.id:<15} \t"
               f"|{display_name:<{max_name_length}} \t"
