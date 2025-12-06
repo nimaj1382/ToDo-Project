@@ -10,16 +10,16 @@ from app.services.task_services import TaskService
 from app.models.task import TaskStatus
 from app.exceptions.service_exceptions import *
 router = APIRouter(
-    prefix="/tasks",
-    tags=["tasks"],
+    prefix = "/tasks",
+    tags = ["tasks"],
 )
 
 
 @router.get(
     "/",
-    response_model=List[TaskResponse],
-    summary="List all tasks",
-    description="Retrieve a list of all tasks in the system."
+    response_model = List[TaskResponse],
+    summary = "List all tasks",
+    description = "Retrieve a list of all tasks in the system."
 )
 async def list_tasks(
         db: Session = Depends(get_db)
@@ -39,10 +39,10 @@ async def list_tasks(
 
 @router.post(
     "/",
-    response_model=TaskResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Create a new task",
-    description="Create a new task within a project."
+    response_model = TaskResponse,
+    status_code = status.HTTP_201_CREATED,
+    summary = "Create a new task",
+    description = "Create a new task within a project."
 )
 async def create_task(
         task: TaskCreate,
@@ -68,41 +68,41 @@ async def create_task(
         task_status = TaskStatus[task.status.name]
 
         created_task = task_service.create_task(
-            task_name=task.name,
-            task_description=task.description,
-            task_status=task_status,
-            task_due_date=task.due_date,
-            task_project_id=task.project_id,
-            project_service=project_service
+            task_name = task.name,
+            task_description = task.description,
+            task_status = task_status,
+            task_due_date = task.due_date,
+            task_project_id = task.project_id,
+            project_service = project_service
         )
         return TaskResponse.model_validate(created_task)
     except UniquenessError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
     except MaxLengthExceededError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
     except ExistanceError as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
         )
     except ValueError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
 
 
 @router.get(
     "/{task_id}",
-    response_model=TaskResponse,
-    summary="Get a task by ID",
-    description="Retrieve a specific task by its ID."
+    response_model = TaskResponse,
+    summary = "Get a task by ID",
+    description = "Retrieve a specific task by its ID."
 )
 async def get_task(
         task_id: int,
@@ -125,8 +125,8 @@ async def get_task(
 
     if task is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Task with id {task_id} not found"
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = f"Task with id {task_id} not found"
         )
 
     return TaskResponse.model_validate(task)
@@ -134,9 +134,9 @@ async def get_task(
 
 @router.put(
     "/{task_id}",
-    response_model=TaskResponse,
-    summary="Update a task",
-    description="Update a task's properties."
+    response_model = TaskResponse,
+    summary = "Update a task",
+    description = "Update a task's properties."
 )
 async def update_task(
         task_id: int,
@@ -164,8 +164,8 @@ async def update_task(
         task = task_service.get_task_by_id(task_id)
         if task is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Task with id {task_id} not found"
+                status_code = status.HTTP_404_NOT_FOUND,
+                detail = f"Task with id {task_id} not found"
             )
 
         # Update name if provided
@@ -203,31 +203,31 @@ async def update_task(
 
     except UniquenessError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
     except MaxLengthExceededError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
     except ExistanceError as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
         )
     except ValueError as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code = status.HTTP_400_BAD_REQUEST,
+            detail = str(e)
         )
 
 
 @router.delete(
     "/{task_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-    summary="Delete a task",
-    description="Delete a specific task."
+    status_code = status.HTTP_204_NO_CONTENT,
+    summary = "Delete a task",
+    description = "Delete a specific task."
 )
 async def delete_task(
         task_id: int,
@@ -248,6 +248,6 @@ async def delete_task(
         task_service.delete_task_by_id(task_id)
     except ExistanceError as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(e)
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = str(e)
         )
