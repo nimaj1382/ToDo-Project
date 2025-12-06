@@ -46,16 +46,13 @@ class ProjectService:
         # Check name and description length
         if len(project_name) > 30:
             raise MaxLengthExceededError("Project name must be 30 characters or fewer.")
-
         if project_description and len(project_description) > 150:
             raise MaxLengthExceededError("Project description must be 150 characters or fewer")
-
         # Check uniqueness of project name
         # Note: Using service-level fetch to enforce business rule before creation.
         if self.get_project_by_name(project_name) != None:
             raise UniquenessError("Project name must be unique. "
                                   "The given project name is already in use.")
-
         project = Project(name = project_name, description = project_description)
         self.repository.add_project(project)
         return project
@@ -204,12 +201,12 @@ class ProjectService:
         project = self.get_project_by_name(project_name)
         if project is None:
             raise ExistanceError("project with given name does not exist.")
-        return self.add_task_to_project(project=project,
-                                        task_name=task_name,
-                                        task_description=task_description,
-                                        task_status=task_status,
-                                        task_due_date=task_due_date,
-                                        task_service=task_service)
+        return self.add_task_to_project(project = project,
+                                        task_name = task_name,
+                                        task_description = task_description,
+                                        task_status = task_status,
+                                        task_due_date = task_due_date,
+                                        task_service = task_service)
 
     def project_tasks_list(self, project: Type[Project]) -> List[Type['Task']]:
         """Return tasks belonging to the given project."""
@@ -293,7 +290,6 @@ class ProjectService:
         max_name_length = int(os.getenv("MAX_SHOW_NAME_LENGTH", 10))
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
         tab_indent = '\t' * indent
-
         print(f"{tab_indent}"
               f"{'project id':^15} \t"
               f"|{'project name':^{max_name_length}} \t"
@@ -314,7 +310,6 @@ class ProjectService:
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
         max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
         tab_indent = '\t' * indent
-
         # Build display strings: take a prefix slice, then append an ellipsis-shortened suffix.
         display_name = (str(project.name)[:max_name_length] +
                         textwrap.shorten(str(project.name)[max_name_length + 1:],
@@ -338,15 +333,12 @@ class ProjectService:
         max_description_length = int(os.getenv("MAX_SHOW_DESCRIPTION_LENGTH", 15))
         max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
         tab_indent = '\t' * indent
-
         all_projects = self.all_projects()
-
         print(f"{tab_indent}"
               f"{'project id':^15} \t"
               f"|{'project name':^{max_name_length}} \t"
               f"|{'project description':^{max_description_length}}")
         print()
-
         for project in all_projects:
             self.print_project(project, indent)
             project_tasks = self.project_tasks_list(project)
