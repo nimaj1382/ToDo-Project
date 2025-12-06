@@ -2,9 +2,7 @@ import os
 import textwrap
 from typing import Optional, List, Type
 from datetime import datetime
-
 from dotenv import load_dotenv
-
 from app.models.task import Task, TaskStatus
 from app.repositories.task_repository import TaskRepository
 from app.exceptions.service_exceptions import *
@@ -12,7 +10,6 @@ from app.services.project_services import ProjectService
 
 
 class TaskService:
-
     def __init__(self, repository: TaskRepository):
         self.repository = repository
 
@@ -24,38 +21,27 @@ class TaskService:
                     project_service: 'ProjectService') -> Task:
 
         # Check task name and description length
-
         if len(task_name) > 30:
             raise MaxLengthExceededError("Task name must be 30 characters or fewer.")
-
         if task_description and len(task_description) > 150:
             raise MaxLengthExceededError("Task description must be 150 characters or fewer")
-
         # Check uniqueness of task name
-
         tasks_with_same_name = self.get_tasks_by_name(task_name)
         for task in tasks_with_same_name:
             if task.project_id == task_project_id :
                 raise UniquenessError("Task name within a project "
                                       "must be unique. The given task "
                                       "name for the given project is already in use.")
-
         # Ensure task_status is of the allowed instance
-
         if not isinstance(task_status, TaskStatus):
             raise ValueError("task_status must be an instance of TaskStatus.")
-
         # Ensure task_due_date is an instance of datetime
-
         if task_due_date and not isinstance(task_due_date, datetime):
             raise ValueError("task_due_date must be an instance of datetime.")
-
         # Ensure that project id is valid
-
         if project_service.get_project_by_id(project_id = task_project_id) is None:
             raise ExistanceError("task_project_id is not valid. "
                                  "There is no project with the given id.")
-
         task = Task(name = task_name, description = task_description,
                     status = task_status, due_date = task_due_date,
                     project_id = task_project_id)
@@ -186,7 +172,6 @@ class TaskService:
         max_due_date_length = int(os.getenv("MAX_SHOW_DUE_DATE_LENGTH", 10))
         max_closed_at_length = int(os.getenv("MAX_SHOW_CLOSED_AT_LENGTH", 10))
         tab_indent = '\t' * indent
-
         display_name = (str(task.name)[:max_name_length] +
                         textwrap.shorten(str(task.name)[max_name_length + 1:],
                                          width=3, placeholder="..."))
